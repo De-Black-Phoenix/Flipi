@@ -273,7 +273,7 @@ export default function DashboardPage() {
               <CardHeader>
                 <CardTitle className="text-lg font-bold">Rank Progress</CardTitle>
                 <CardDescription className="text-sm">
-                  {rankInfo.nextTierName ? (
+                  {"nextTierName" in rankInfo && rankInfo.nextTierName ? (
                     <>
                       {rankInfo.pointsNeededForNext} points until {rankInfo.nextTierEmoji} {rankInfo.nextTierName}
                     </>
@@ -288,7 +288,7 @@ export default function DashboardPage() {
                     <span className="text-muted-foreground">
                       {rankInfo.emoji} {rankInfo.name} ({profile.points || 0} points)
                     </span>
-                    {rankInfo.nextTierName && (
+                    {"nextTierName" in rankInfo && rankInfo.nextTierName && (
                       <span className="text-muted-foreground">
                         {rankInfo.nextTierEmoji} {rankInfo.nextTierName} ({rankInfo.min} points)
                       </span>
@@ -297,7 +297,7 @@ export default function DashboardPage() {
                   <div className="w-full bg-muted rounded-full h-3 overflow-hidden">
                     <div
                       className="bg-primary h-full transition-all duration-300 rounded-full"
-                      style={{ width: `${rankInfo.progress}%` }}
+                      style={{ width: "progress" in rankInfo ? `${rankInfo.progress}%` : "100%", }}
                     />
                   </div>
                 </div>
