@@ -23,7 +23,8 @@ const nextConfig = {
   swcMinify: true,
 
   experimental: {
-    optimizeCss: true,
+    // Disable optimizeCss temporarily as it may interfere with error page rendering
+    // optimizeCss: true,
   },
 
   compiler: {
@@ -33,8 +34,10 @@ const nextConfig = {
         : false,
   },
 
-  webpack: (config, { isServer }) => {
-    if (!isServer) {
+  webpack: (config, { isServer, dev }) => {
+    // Only apply custom webpack config in production client builds
+    // Avoid interfering with Vercel's build optimization
+    if (!isServer && !dev) {
       config.optimization = {
         ...config.optimization,
         splitChunks: {
