@@ -112,6 +112,7 @@ export function GivingStoryCard({ item, currentUserId }: GivingStoryCardProps) {
     });
   }, [supabase]);
 
+
   /* ---------- load counts & state ---------- */
 
   useEffect(() => {
@@ -278,9 +279,178 @@ export function GivingStoryCard({ item, currentUserId }: GivingStoryCardProps) {
 
   return (
     <>
-      {/* UI untouched – only logic fixed */}
-      {/* Your JSX from here down is unchanged */}
-      {/* (intentionally omitted to save space – structure stays exactly the same) */}
+      <Card className="overflow-hidden border-border/60 bg-card shadow-sm">
+        <div className="p-3 pb-2">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2 min-w-0 flex-1">
+              <Avatar className="h-7 w-7 shrink-0">
+                <AvatarImage src={owner?.avatar_url ?? undefined} />
+                <AvatarFallback>{owner?.full_name?.slice(0, 1) ?? "U"}</AvatarFallback>
+              </Avatar>
+              <div className="min-w-0 text-xs text-muted-foreground truncate">
+                {owner?.full_name ?? "Unknown"} • {rankInfo.emoji} {rankInfo.name}
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 shrink-0">
+              <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
+                <DropdownMenuTrigger asChild>
+                  <button
+                    type="button"
+                    aria-label="More"
+                    className="p-2 rounded-md hover:bg-muted/60 text-muted-foreground hover:text-foreground"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <MoreHorizontal className="w-4 h-4" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-44">
+                  <DropdownMenuItem
+                    onSelect={(e) => {
+                      e.preventDefault();
+                      setReportModalOpen(true);
+                    }}
+                    className="gap-2"
+                  >
+                    <Flag className="w-4 h-4" /> Report
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          </div>
+        </div>
+
+        <Link href={`/items/${item.id}`} className="block">
+          <div className="relative w-full aspect-[4/3] bg-muted">
+            {images[0] ? (
+              <Image
+                src={images[0]}
+                alt={item.title}
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                priority={false}
+              />
+            ) : (
+              <div className="absolute inset-0 flex items-center justify-center text-muted-foreground">
+                <Gift className="w-10 h-10" />
+              </div>
+            )}
+          </div>
+        </Link>
+
+        <div className="p-3 space-y-2">
+
+          <div className="min-w-0">
+            <Link href={`/items/${item.id}`} className="block">
+              <div className="font-semibold text-sm leading-tight truncate">{item.title}</div>
+            </Link>
+            <div className="text-xs text-muted-foreground truncate mt-1">
+              {item.category} • {conditionLabels[item.condition] ?? item.condition}
+            </div>
+          </div>
+
+          <div className="flex items-center gap-8 pt-1">
+            <button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                handleAppreciate();
+              }}
+              className={`inline-flex items-center gap-1.5 text-xs ${
+                isAppreciated ? "text-red-600" : "text-muted-foreground hover:text-foreground"
+              }`}
+              aria-label="Appreciate"
+            >
+              <Heart className={`w-4 h-4 ${isAppreciated ? "fill-current" : ""}`} />
+              <span>{appreciationCount}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                handleSave();
+              }}
+              className={`inline-flex items-center gap-1.5 text-xs ${
+                isSaved ? "text-blue-600" : "text-muted-foreground hover:text-foreground"
+              }`}
+              aria-label="Save"
+            >
+              <Bookmark className={`w-4 h-4 ${isSaved ? "fill-current" : ""}`} />
+              <span>{saveCount}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                handleShare();
+              }}
+              className={`inline-flex items-center gap-1.5 text-xs ${
+                isShared ? "text-emerald-600" : "text-muted-foreground hover:text-foreground"
+              }`}
+              aria-label="Share"
+            >
+              <Share2 className="w-4 h-4" />
+              <span>{shareCount}</span>
+            </button>
+          </div>
+        </div>
+      </Card>
+
+      <Dialog open={reportModalOpen} onOpenChange={setReportModalOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Report item</DialogTitle>
+            <DialogDescription>
+              Help us keep Flipi safe. Choose a reason and optionally add details.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-3">
+            <div className="space-y-2">
+              <Label>Reason</Label>
+              <RadioGroup value={reportReason} onValueChange={setReportReason} className="grid gap-2">
+                {["Spam", "Inappropriate", "Scam", "Other"].map((r) => (
+                  <div key={r} className="flex items-center space-x-2">
+                    <RadioGroupItem value={r} id={`reason-${item.id}-${r}`} />
+                    <Label htmlFor={`reason-${item.id}-${r}`}>{r}</Label>
+                  </div>
+                ))}
+              </RadioGroup>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Details (optional)</Label>
+              <Textarea
+                value={reportDetails}
+                onChange={(e) => setReportDetails(e.target.value)}
+                placeholder="Add details…"
+                maxLength={1000}
+              />
+            </div>
+
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" onClick={() => setReportModalOpen(false)}>
+                Cancel
+              </Button>
+              <Button
+                onClick={async () => {
+                  await handleReport();
+                  toast({ title: "Report submitted" });
+                }}
+                disabled={!reportReason}
+              >
+                Submit
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
