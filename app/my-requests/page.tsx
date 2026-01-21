@@ -23,9 +23,7 @@ export default function MyRequestsPage() {
 
   useEffect(() => {
     if (!user) {
-      if (!authLoading) {
-        setLoading(false);
-      }
+      setLoading(false);
       return;
     }
 
@@ -190,7 +188,8 @@ export default function MyRequestsPage() {
     loadLastMessages();
   }, [conversations, supabase]);
 
-  if (authLoading || loading) {
+  // Render immediately with skeleton while loading
+  if (loading) {
     return (
       <div className="h-full overflow-y-auto custom-scrollbar bg-background">
         <div className="max-w-6xl mx-auto px-4 py-3">

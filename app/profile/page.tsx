@@ -21,6 +21,7 @@ import { useAuthGuard } from "@/hooks/use-auth-guard";
 import { useToast } from "@/hooks/use-toast";
 import { Trophy, MapPin, Calendar, Edit, Star, ArrowLeft, Save, ImageIcon } from "lucide-react";
 import { GiverReviews } from "@/components/giver-reviews";
+import { ProfileSkeleton } from "@/components/skeletons/profile-skeleton";
 
 const REGIONS = [
   "Greater Accra", "Ashanti", "Western", "Eastern", "Central", 
@@ -255,10 +256,13 @@ export default function ProfilePage() {
     return tiers[0];
   };
 
-  if (authLoading || loading || !profile) {
+  // Render immediately with skeleton while loading
+  if (loading || !profile) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-500 rounded-full animate-spin" />
+      <div className="min-h-screen bg-background">
+        <div className="max-w-4xl mx-auto px-4 pt-8 md:pt-12 pb-8 md:pb-12">
+          <ProfileSkeleton />
+        </div>
       </div>
     );
   }
@@ -433,7 +437,7 @@ export default function ProfilePage() {
                 >
                   <input {...getInputProps()} />
                   {uploading ? (
-                    <div className="w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                    <span className="text-xs">Uploading...</span>
                   ) : (
                     <ImageIcon className="w-5 h-5" />
                   )}
@@ -500,10 +504,7 @@ export default function ProfilePage() {
               </Button>
               <Button onClick={handleSaveProfile} disabled={saving}>
                 {saving ? (
-                  <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                    Saving...
-                  </div>
+                  <span>Saving...</span>
                 ) : (
                   <>
                     <Save className="w-4 h-4 mr-2" />

@@ -112,9 +112,7 @@ export default function MyItemsPage() {
   // Load items list
   useEffect(() => {
     if (!user) {
-      if (!authLoading) {
-        setLoading(false);
-      }
+      setLoading(false);
       return;
     }
 
@@ -382,7 +380,8 @@ export default function MyItemsPage() {
     });
   };
 
-  if (authLoading || loading) {
+  // Render immediately with skeleton while loading
+  if (loading) {
     return <MyItemsSkeleton />;
   }
 

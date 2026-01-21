@@ -213,10 +213,7 @@ export default function SuccessPage() {
               </Button>
               <Button onClick={handleSubmitReview} disabled={submittingReview || !reviewText.trim()} className="flex-1">
                 {submittingReview ? (
-                  <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                    Submitting...
-                  </div>
+                  <span>Submitting...</span>
                 ) : (
                   "Submit Review"
                 )}
@@ -243,10 +240,7 @@ export default function SuccessPage() {
             </Button>
             <Button onClick={handleDonate} disabled={loading} className="flex-1">
               {loading ? (
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                  Processing...
-                </div>
+                <span>Processing...</span>
               ) : (
                 "Support with GH₵1"
               )}

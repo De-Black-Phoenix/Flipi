@@ -222,10 +222,7 @@ export default function NewCampaignPage() {
 
             <Button type="submit" className="w-full" size="lg" disabled={loading}>
               {loading ? (
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                  Creating...
-                </div>
+                <span>Creating...</span>
               ) : (
                 "Create Campaign"
               )}

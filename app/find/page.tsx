@@ -343,13 +343,19 @@ export default function FindItemsPage() {
             Found {items.length} item{items.length !== 1 ? "s" : ""}
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {items.map((item: any) => (
-              <GivingStoryCard
-                key={item.id}
-                item={item}
-                currentUserId={user?.id}
-              />
-            ))}
+            {loading ? (
+              Array.from({ length: 6 }).map((_, i) => (
+                <ItemCardSkeleton key={i} />
+              ))
+            ) : (
+              items.map((item: any) => (
+                <GivingStoryCard
+                  key={item.id}
+                  item={item}
+                  currentUserId={user?.id}
+                />
+              ))
+            )}
           </div>
         </>
       )}

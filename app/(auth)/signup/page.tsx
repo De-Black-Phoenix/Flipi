@@ -95,15 +95,7 @@ export default function SignupPage() {
     }
   };
 
-  if (authLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-blue-50 to-white">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-500 rounded-full animate-spin" />
-        </div>
-      </div>
-    );
-  }
+  // Render immediately - auth is non-blocking
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -175,10 +167,7 @@ export default function SignupPage() {
               </div>
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading ? (
-                  <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                    Creating account...
-                  </div>
+                  <span>Creating account...</span>
                 ) : (
                   "Sign up"
                 )}

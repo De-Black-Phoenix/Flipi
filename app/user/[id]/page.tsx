@@ -7,11 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ArrowLeft, UserPlus, UserMinus, Gift, MapPin } from "lucide-react";
 
-// #region agent log
-const log = (message: string, data: any, hypothesisId?: string) => {
-  fetch('http://127.0.0.1:7243/ingest/f26d9da2-ab06-4244-a454-eea51bd6aa25',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'user/[id]/page.tsx',message,data,timestamp:Date.now(),sessionId:'debug-session',hypothesisId})}).catch(()=>{});
-};
-// #endregion
 
 // Rank tier emoji helper
 const getRankEmoji = (rank?: string) => {
@@ -29,6 +24,7 @@ import { createClient } from "@/lib/supabase/client";
 import { useAuthGuard } from "@/hooks/use-auth-guard";
 import { useToast } from "@/hooks/use-toast";
 import { GivingStoryCard } from "@/components/giving-story-card";
+import { ProfileSkeleton } from "@/components/skeletons/profile-skeleton";
 import Image from "next/image";
 
 export default function UserProfilePage() {
@@ -91,9 +87,6 @@ export default function UserProfilePage() {
           .single();
 
         if (profileError || !profileData) {
-          // #region agent log
-          log('Profile not found - redirecting to /find', {userId,profileError:profileError?.message,hasProfileData:!!profileData}, 'F');
-          // #endregion
           toast({
             title: "User not found",
             description: "This user profile does not exist",
@@ -103,9 +96,6 @@ export default function UserProfilePage() {
           return;
         }
 
-        // #region agent log
-        log('Profile loaded successfully', {userId,hasProfile:!!profileData,profileName:profileData?.full_name}, 'G');
-        // #endregion
         setProfile(profileData);
 
         // Load items
@@ -216,10 +206,13 @@ export default function UserProfilePage() {
     }
   };
 
+  // Render immediately with skeleton while loading
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-500 rounded-full animate-spin" />
+      <div className="min-h-screen bg-background">
+        <div className="max-w-4xl mx-auto px-4 pt-8 md:pt-12 pb-8 md:pb-12">
+          <ProfileSkeleton />
+        </div>
       </div>
     );
   }

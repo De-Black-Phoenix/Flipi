@@ -64,10 +64,6 @@ export default function SplashPage() {
           </p>
         </div>
 
-        {/* Loading Indicator */}
-        <div className="mt-8">
-          <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-500 rounded-full animate-spin" />
-        </div>
       </div>
     </div>
   );

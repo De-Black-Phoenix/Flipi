@@ -580,15 +580,7 @@ export default function GiveItemPage() {
     setImages(images.filter((_, i) => i !== index));
   };
 
-  if (authLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-500 rounded-full animate-spin" />
-        </div>
-      </div>
-    );
-  }
+  // Render immediately - auth is non-blocking
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -789,10 +781,7 @@ export default function GiveItemPage() {
             <div className="flex justify-end">
               <Button type="submit" className="w-auto" size="lg" disabled={loading || uploading}>
                 {loading || uploading ? (
-                  <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                    {uploading ? "Uploading images..." : "Listing item..."}
-                  </div>
+                  <span>{uploading ? "Uploading images..." : "Listing item..."}</span>
                 ) : (
                   "List Item"
                 )}

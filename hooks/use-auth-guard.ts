@@ -10,7 +10,6 @@ interface UseAuthGuardOptions {
 }
 
 export function useAuthGuard({ requireAuth = true, redirectTo }: UseAuthGuardOptions = {}) {
-  const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
   const router = useRouter();
   const supabase = createClient();
@@ -25,7 +24,6 @@ export function useAuthGuard({ requireAuth = true, redirectTo }: UseAuthGuardOpt
 
         if (mounted) {
           setUser(currentUser ?? null);
-          setLoading(false);
 
           if (error || !currentUser) {
             if (requireAuth) {
@@ -38,7 +36,6 @@ export function useAuthGuard({ requireAuth = true, redirectTo }: UseAuthGuardOpt
       } catch (error) {
         if (mounted) {
           setUser(null);
-          setLoading(false);
           if (requireAuth) {
             router.replace(redirectTo || "/login");
           }
@@ -68,6 +65,7 @@ export function useAuthGuard({ requireAuth = true, redirectTo }: UseAuthGuardOpt
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [requireAuth, redirectTo]);
 
-  return { user, loading };
+  // Return loading: false to maintain API compatibility but not block rendering
+  return { user, loading: false };
 }
 

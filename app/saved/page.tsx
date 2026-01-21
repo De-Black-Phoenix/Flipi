@@ -8,10 +8,12 @@ import { ArrowLeft, Gift } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useAuthGuard } from "@/hooks/use-auth-guard";
 import { GivingStoryCard } from "@/components/giving-story-card";
+import { ItemCardSkeleton } from "@/components/skeletons/item-card-skeleton";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function SavedItemsPage() {
   const [savedItems, setSavedItems] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const router = useRouter();
   const supabase = createClient();
@@ -50,7 +52,10 @@ export default function SavedItemsPage() {
 
   // Load saved items
   useEffect(() => {
-    if (!user) return;
+    if (!user) {
+      setLoading(false);
+      return;
+    }
 
     const loadSavedItems = async () => {
       try {
@@ -94,15 +99,7 @@ export default function SavedItemsPage() {
     };
 
     loadSavedItems();
-  }, [user]);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-500 rounded-full animate-spin" />
-      </div>
-    );
-  }
+  }, [user, supabase]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -135,7 +132,13 @@ export default function SavedItemsPage() {
         </div>
 
         {/* Saved Items Grid */}
-        {savedItems.length === 0 ? (
+        {loading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <ItemCardSkeleton key={i} />
+            ))}
+          </div>
+        ) : savedItems.length === 0 ? (
           <Card>
             <CardContent className="py-12 text-center">
               <Gift className="w-12 h-12 text-gray-300 mx-auto mb-4" />
@@ -146,7 +149,7 @@ export default function SavedItemsPage() {
             </CardContent>
           </Card>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {savedItems.map((item) => (
               <GivingStoryCard
                 key={item.id}

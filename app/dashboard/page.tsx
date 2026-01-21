@@ -58,9 +58,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if (!user) {
-      if (!authLoading) {
-        setLoading(false);
-      }
+      setLoading(false);
       return;
     }
 
@@ -172,7 +170,8 @@ export default function DashboardPage() {
     };
   }, []);
 
-  if (authLoading || loading || !profile) {
+  // Render immediately with skeleton while loading
+  if (loading || !profile) {
     return (
       <div className="h-full overflow-y-auto bg-background">
         <DashboardSkeleton />

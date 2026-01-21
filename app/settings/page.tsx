@@ -19,6 +19,7 @@ import {
 import { createClient } from "@/lib/supabase/client";
 import { useAuthGuard } from "@/hooks/use-auth-guard";
 import { useToast } from "@/hooks/use-toast";
+import { ProfileSkeleton } from "@/components/skeletons/profile-skeleton";
 import { ArrowLeft, Mail, Lock, Trash2, Moon, Sun, Monitor, Eye, EyeOff } from "lucide-react";
 
 export default function SettingsPage() {
@@ -338,10 +339,13 @@ export default function SettingsPage() {
     }
   };
 
-  if (authLoading || loading || !profile) {
+  // Render immediately with skeleton while loading
+  if (loading || !profile) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-500 rounded-full animate-spin" />
+      <div className="min-h-screen bg-background">
+        <div className="max-w-4xl mx-auto px-4 pt-8 md:pt-12 pb-8 md:pb-12">
+          <ProfileSkeleton />
+        </div>
       </div>
     );
   }

@@ -144,10 +144,7 @@ export function GiveItemDialog({
           </Button>
           <Button onClick={handleGiveItem} disabled={loading}>
             {loading ? (
-              <div className="flex items-center gap-2">
-                <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                Processing...
-              </div>
+              <span>Processing...</span>
             ) : (
               "Yes, Give Item"
             )}
