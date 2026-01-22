@@ -157,16 +157,16 @@ export default function AdminPage() {
               {users.map((user: any) => (
                 <Card key={user.id}>
                   <CardHeader>
-                    <div className="flex justify-between items-start">
+                    <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-2">
                       <div>
                         <CardTitle className="user-name">{user.full_name || "Anonymous"}</CardTitle>
                         <CardDescription>{user.email}</CardDescription>
                       </div>
-                      <div className="flex gap-2">
-                        <span className="px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-700">
+                      <div className="flex flex-row flex-wrap gap-2 md:items-center">
+                        <span className="px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-700 w-fit">
                           {user.user_type}
                         </span>
-                        <span className="px-3 py-1 rounded-full text-sm bg-gray-100 text-gray-700">
+                        <span className="px-3 py-1 rounded-full text-sm bg-gray-100 text-gray-700 w-fit">
                           {user.rank} ({user.points} pts)
                         </span>
                       </div>

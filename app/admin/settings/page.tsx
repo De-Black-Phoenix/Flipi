@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { createClient } from "@/lib/supabase/client";
 import { useAuthGuard } from "@/hooks/use-auth-guard";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Save, Mail, Phone, FileText, Instagram, Twitter, Globe, Music } from "lucide-react";
+import { Save, Mail, Phone, FileText, Instagram, Twitter, Globe, Music } from "lucide-react";
 
 interface PlatformSetting {
   key: string;
@@ -23,41 +23,10 @@ export default function AdminSettingsPage() {
   const [settings, setSettings] = useState<Record<string, PlatformSetting>>({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState<Record<string, boolean>>({});
-  const [isScrolled, setIsScrolled] = useState(false);
   const router = useRouter();
   const supabase = createClient();
   const { toast } = useToast();
   const { user, loading: authLoading } = useAuthGuard({ requireAuth: true });
-
-  useEffect(() => {
-    let scrollContainer: HTMLElement | null = null;
-    let timeoutId: NodeJS.Timeout;
-
-    const handleScroll = () => {
-      if (scrollContainer) {
-        setIsScrolled(scrollContainer.scrollTop > 100);
-      } else {
-        setIsScrolled(window.scrollY > 100);
-      }
-    };
-
-    timeoutId = setTimeout(() => {
-      scrollContainer = document.querySelector('main div.overflow-y-auto') as HTMLElement;
-      const target = scrollContainer || window;
-      
-      target.addEventListener("scroll", handleScroll, { passive: true });
-      handleScroll();
-    }, 100);
-
-    return () => {
-      clearTimeout(timeoutId);
-      if (scrollContainer) {
-        scrollContainer.removeEventListener("scroll", handleScroll);
-      } else {
-        window.removeEventListener("scroll", handleScroll);
-      }
-    };
-  }, []);
 
   useEffect(() => {
     if (!user) return;
@@ -184,7 +153,7 @@ export default function AdminSettingsPage() {
     return (
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
+          <div className="space-y-1">
             <div className="flex items-center gap-2">
               <Icon className="w-5 h-5 text-primary" />
               <CardTitle className="text-lg">{label}</CardTitle>
@@ -235,28 +204,9 @@ export default function AdminSettingsPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-4xl mx-auto px-4 pt-8 md:pt-12 pb-8 md:pb-12">
-        {/* Back Button - Fixed at top */}
-        <div className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm py-4 -mx-4 px-4 border-b border-border/40 mb-8">
-          <div className="flex items-center gap-4">
-            <Button
-              variant="ghost"
-              onClick={() => router.back()}
-              className="border-transparent hover:bg-transparent hover:border hover:border-primary/20 hover:text-foreground"
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back
-            </Button>
-            {isScrolled && (
-              <h1 className="text-lg font-semibold text-foreground transition-opacity duration-200">
-                Platform Settings
-              </h1>
-            )}
-          </div>
-        </div>
-
+      <div className="max-w-4xl mx-auto px-4 md:px-6 pt-3 md:pt-8 pb-20 md:pb-12">
         {/* Header */}
-        <div className="mb-8 mt-4">
+        <div className="hidden md:block mb-8">
           <h1 className="text-3xl font-bold mb-2">Platform Settings</h1>
           <p className="text-muted-foreground">
             Manage platform-wide content and information
@@ -265,7 +215,7 @@ export default function AdminSettingsPage() {
 
         {/* Contact Information */}
         <div className="space-y-6 mb-8">
-          <h2 className="text-xl font-semibold">Contact Information</h2>
+          <h2 className="text-lg md:text-xl font-semibold">Contact Information</h2>
           <SettingField
             keyName="support_email"
             label="Support Email"
@@ -282,7 +232,7 @@ export default function AdminSettingsPage() {
 
         {/* Content Pages */}
         <div className="space-y-6 mb-8">
-          <h2 className="text-xl font-semibold">Content Pages</h2>
+          <h2 className="text-lg md:text-xl font-semibold">Content Pages</h2>
           <SettingField
             keyName="about_us"
             label="About Us"
@@ -308,7 +258,7 @@ export default function AdminSettingsPage() {
 
         {/* Social Links */}
         <div className="space-y-6">
-          <h2 className="text-xl font-semibold">Social Links</h2>
+          <h2 className="text-lg md:text-xl font-semibold">Social Links</h2>
           <SettingField
             keyName="instagram_link"
             label="Instagram"

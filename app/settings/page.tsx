@@ -323,7 +323,7 @@ export default function SettingsPage() {
     <div className="min-h-screen bg-background">
       <div className="max-w-2xl mx-auto px-4 md:px-6 pt-3 md:pt-8 pb-20 md:pb-12">
         {/* Header */}
-        <div className="mb-4 md:mb-8">
+        <div className="hidden md:block mb-4 md:mb-8">
           <h1 className="text-lg md:text-3xl font-bold mb-2">Settings</h1>
           <p className="text-sm md:text-base text-muted-foreground">
             Manage your account settings and preferences

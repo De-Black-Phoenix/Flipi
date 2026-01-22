@@ -6,7 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Settings } from "lucide-react";
 import { useMobileSidebar } from "./mobile-sidebar";
 
 export function MobileTopBar() {
@@ -55,7 +55,10 @@ export function MobileTopBar() {
 
   // Get page title from pathname
   const getPageTitle = () => {
-    if (pathname === "/home" || pathname === "/dashboard") return "Home";
+    if (pathname === "/home") return "Home";
+    if (pathname === "/dashboard") return "Dashboard";
+    if (pathname === "/admin") return "Admin Panel";
+    if (pathname === "/admin/settings") return "Platform Settings";
     if (pathname === "/find") return "Find Items";
     if (pathname === "/give") return "Give Item";
     if (pathname?.startsWith("/campaigns")) return "Campaigns";
@@ -71,7 +74,8 @@ export function MobileTopBar() {
   };
 
   const pageTitle = getPageTitle();
-  const isHomePage = pathname === "/home" || pathname === "/dashboard";
+  const isHomePage = pathname === "/home";
+  const isDashboard = pathname === "/dashboard";
   const showBackButton =
     pathname?.startsWith("/items/") ||
     pathname?.startsWith("/my-items") ||
@@ -80,7 +84,18 @@ export function MobileTopBar() {
     pathname === "/profile" ||
     pathname === "/saved" ||
     pathname === "/dashboard" ||
-    pathname === "/admin";
+    pathname === "/admin" ||
+    pathname === "/admin/settings";
+
+  const showAdminSettings = pathname === "/admin";
+
+  const greetingText = (() => {
+    if (!isDashboard) return "";
+    const hour = new Date().getHours();
+    const greeting = hour < 12 ? "Good Morning" : hour < 18 ? "Good Afternoon" : "Good Evening";
+    const firstName = profile?.full_name?.split(" ")[0] || user?.email?.split("@")[0] || "";
+    return firstName ? `${greeting} ${firstName}` : greeting;
+  })();
 
   return (
     <div className="md:hidden fixed top-0 left-0 right-0 bg-background/95 backdrop-blur-sm border-b border-border z-30 safe-area-inset-top">
@@ -97,15 +112,27 @@ export function MobileTopBar() {
               <ArrowLeft className="w-4 h-4" />
             </Button>
           )}
-          {isHomePage ? (
-          <Link href="/home" className="text-[15px] font-semibold text-primary font-brand">
+          {isDashboard ? (
+            <h1 className="text-[17px] font-bold text-foreground truncate">{greetingText}</h1>
+          ) : isHomePage ? (
+            <Link href="/home" className="text-[17px] font-bold text-primary font-brand">
               🐬 Flipi
             </Link>
           ) : (
-            <h1 className="text-[15px] font-semibold text-foreground truncate">{pageTitle}</h1>
+            <h1 className="text-[17px] font-bold text-foreground truncate">{pageTitle}</h1>
           )}
         </div>
-        {!showBackButton && (
+        {showAdminSettings ? (
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => router.push("/admin/settings")}
+            className="h-9 w-9"
+            aria-label="Platform settings"
+          >
+            <Settings className="w-4 h-4" />
+          </Button>
+        ) : !showBackButton ? (
           <Button
             variant="ghost"
             size="icon"
@@ -120,6 +147,8 @@ export function MobileTopBar() {
               </AvatarFallback>
             </Avatar>
           </Button>
+        ) : (
+          <div className="w-9" />
         )}
       </div>
     </div>

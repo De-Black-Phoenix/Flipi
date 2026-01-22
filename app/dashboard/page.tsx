@@ -190,7 +190,9 @@ export default function DashboardPage() {
 
           <Card className="hover:border-primary/50">
             <CardHeader className="pb-2">
-              <CardTitle className="text-xs font-normal text-muted-foreground uppercase tracking-wider">Items Given</CardTitle>
+              <CardTitle className="text-xs font-normal text-muted-foreground uppercase tracking-wider font-brand">
+                Items Given
+              </CardTitle>
           </CardHeader>
           <CardContent>
               <div className="flex items-center gap-3">
@@ -205,7 +207,9 @@ export default function DashboardPage() {
 
           <Card className="hover:border-primary/50">
             <CardHeader className="pb-2">
-              <CardTitle className="text-xs font-normal text-muted-foreground uppercase tracking-wider">Campaign Items</CardTitle>
+              <CardTitle className="text-xs font-normal text-muted-foreground uppercase tracking-wider font-brand">
+                Campaign Items
+              </CardTitle>
           </CardHeader>
           <CardContent>
               <div className="flex items-center gap-3">
@@ -220,14 +224,18 @@ export default function DashboardPage() {
 
           <Card className="hover:border-primary/50">
             <CardHeader className="pb-2">
-              <CardTitle className="text-xs font-normal text-muted-foreground uppercase tracking-wider">Total Points</CardTitle>
+              <CardTitle className="text-xs font-normal text-muted-foreground uppercase tracking-wider font-brand">
+                Total Points
+              </CardTitle>
           </CardHeader>
           <CardContent>
               <div className="flex items-center gap-3">
                 <MessageSquare className="w-5 h-5 text-muted-foreground" />
                 <div>
-                  <span className="text-2xl font-bold text-foreground block leading-none">{profile.points || 0}</span>
-                  <p className="text-xs text-muted-foreground mt-1 font-normal">Points earned</p>
+                  <span className="text-2xl font-bold text-foreground block leading-none font-brand">
+                    {profile.points || 0}
+                  </span>
+                  <p className="text-xs text-muted-foreground mt-1 font-normal font-brand">TOTAL POINTS</p>
                 </div>
             </div>
           </CardContent>

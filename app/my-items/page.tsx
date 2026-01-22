@@ -352,7 +352,7 @@ export default function MyItemsPage() {
   if (!items || items.length === 0) {
     return (
       <div className="min-h-screen px-4 md:px-6 pt-3 md:pt-8 pb-20 md:pb-8 max-w-6xl mx-auto animate-in fade-in duration-300">
-        <div className="mb-4 md:mb-8">
+        <div className="hidden md:block mb-4 md:mb-8">
           <h1 className="text-lg md:text-3xl font-bold mb-2">My Items</h1>
           <p className="text-sm md:text-base text-muted-foreground">Manage your listings and conversations</p>
         </div>
