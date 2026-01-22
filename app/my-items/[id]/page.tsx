@@ -138,7 +138,7 @@ export default function ItemManagementPage() {
                       </AvatarFallback>
                     </Avatar>
                     <div>
-                      <CardTitle className="text-lg">
+                      <CardTitle className="text-lg user-name">
                         {conversation.profiles?.full_name || "Anonymous"}
                       </CardTitle>
                       {conversation.owner_unread_count > 0 && (

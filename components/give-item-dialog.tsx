@@ -128,14 +128,14 @@ export function GiveItemDialog({
       <DialogTrigger asChild>
         <Button className="w-full" variant="default">
           <Gift className="w-4 h-4 mr-2" />
-          Give item to {requesterName}
+          Give item to <span className="user-name">{requesterName}</span>
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Give Item</DialogTitle>
           <DialogDescription>
-            Are you sure you want to give this item to {requesterName}? This action cannot be undone.
+            Are you sure you want to give this item to <span className="user-name">{requesterName}</span>? This action cannot be undone.
           </DialogDescription>
         </DialogHeader>
         <div className="flex gap-3 justify-end">

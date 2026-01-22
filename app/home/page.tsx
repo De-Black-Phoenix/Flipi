@@ -185,19 +185,19 @@ export default function HomePage() {
 
       <div className="h-full flex flex-col overflow-hidden bg-background">
         {/* Main Content - Centered */}
-        <div className="flex-1 flex items-center justify-center px-4 py-8">
+        <div className="flex-1 flex items-center justify-center px-4 md:px-6 py-6 md:py-8">
           <div className="text-center max-w-2xl mx-auto">
-            <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-3 leading-tight">
-              Need it? <span className="text-primary">Flipi.</span>
+            <h1 className="text-2xl md:text-4xl font-bold text-foreground mb-3 leading-tight">
+            Need it? <span className="text-primary font-brand">Flipi.</span>
             </h1>
             <p className="text-sm md:text-base text-muted-foreground mb-4 leading-relaxed">
               A friendly community where kindness flows. Give what you don't need, find what you can't afford.
             </p>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <GiveItemButton size="default" className="px-6">
+            <div className="flex flex-row gap-3 justify-center">
+              <GiveItemButton size="default" className="px-6 flex-1 sm:flex-none">
                 Give an item
               </GiveItemButton>
-              <Button asChild variant="outline" size="default" className="px-6">
+              <Button asChild variant="outline" size="default" className="px-6 flex-1 sm:flex-none">
                 <Link href="/find">Find help</Link>
               </Button>
             </div>
@@ -205,12 +205,12 @@ export default function HomePage() {
         </div>
 
         {/* Top Givers Section */}
-        <div className="flex-shrink-0 px-4 py-12 border-t border-border -mt-4">
+        <div className="flex-shrink-0 px-4 md:px-6 py-8 md:py-12 border-t border-border -mt-4">
           <div className="max-w-4xl mx-auto">
             {/* Section Title */}
-            <div className="mb-6 text-center">
-              <h2 className="text-xl md:text-2xl font-bold text-foreground mb-2">Top Contributors in Our Community</h2>
-              <p className="text-sm text-muted-foreground">Celebrating individuals with the most points who make a difference through generosity</p>
+            <div className="mb-4 md:mb-6 text-center">
+              <h2 className="text-lg md:text-2xl font-bold text-foreground mb-2">Top Contributors in Our Community</h2>
+              <p className="text-xs md:text-sm text-muted-foreground">Celebrating individuals with the most points who make a difference through generosity</p>
             </div>
 
             {/* Top Givers Cards - Seamless Infinite Scroll */}
@@ -231,12 +231,12 @@ export default function HomePage() {
                     return (
                       <div
                         key={`${giver.id}-${index}`}
-                        className="flex-shrink-0 w-[160px] sm:w-[180px] md:w-[200px] aspect-square rounded-[24px] overflow-hidden relative group bg-gradient-to-br from-primary/5 to-primary/10 border border-primary/20"
+                        className="flex-shrink-0 w-[160px] sm:w-[180px] md:w-[200px] aspect-square rounded-[24px] overflow-hidden relative group bg-gradient-to-br from-primary/5 to-primary/10 border border-primary/20 md:backdrop-blur-none"
                       >
                         {/* User Avatar */}
                         <div className="absolute inset-0 flex flex-col items-center justify-center p-4">
                           <div className="relative mb-3">
-                            <Avatar className="w-16 h-16 md:w-20 md:h-20 border-2 border-primary/30 shadow-lg">
+                            <Avatar className="w-16 h-16 md:w-20 md:h-20 border-2 border-primary/30 md:shadow-lg">
                               <AvatarImage src={giver.avatar_url || undefined} />
                               <AvatarFallback className="bg-primary/10 text-primary font-semibold text-lg">
                                 {giver.full_name?.charAt(0)?.toUpperCase() || "U"}
@@ -249,7 +249,7 @@ export default function HomePage() {
                           </div>
                           
                           {/* User Name */}
-                          <h3 className="text-sm md:text-base font-semibold text-foreground mb-1.5 text-center line-clamp-1">
+                          <h3 className="text-sm md:text-base font-semibold text-foreground mb-1.5 text-center line-clamp-1 user-name">
                             {giver.full_name}
                           </h3>
                           

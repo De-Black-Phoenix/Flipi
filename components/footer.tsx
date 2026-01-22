@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Instagram, Twitter, Music, Globe, Mail, PhoneCall } from "lucide-react";
+import { Instagram, Twitter, Music, Globe } from "lucide-react";
 import { usePlatformSettings } from "@/hooks/use-platform-settings";
 
 export function Footer() {
@@ -15,7 +15,7 @@ export function Footer() {
   ].filter((link) => settings[link.key as keyof typeof settings]);
 
   return (
-    <footer className="flex-shrink-0 border-t border-border px-4 py-3">
+    <footer className="hidden md:flex flex-shrink-0 border-t border-border px-4 py-3">
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-wrap items-center justify-center gap-6 text-xs text-muted-foreground">
           <Link href="/find" className="hover:text-foreground">Find Items</Link>
@@ -44,27 +44,7 @@ export function Footer() {
             );
           })}
 
-          {/* Contact Info */}
-          {settings.support_email && typeof settings.support_email === "string" && (
-            <a
-              href={`mailto:${settings.support_email}`}
-              className="hover:text-foreground flex items-center gap-1"
-            >
-              <Mail className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">{settings.support_email}</span>
-            </a>
-          )}
-          {settings.support_phone && typeof settings.support_phone === "string" && (
-            <a
-              href={`tel:${settings.support_phone.replace(/\s/g, "")}`}
-              className="hover:text-foreground flex items-center gap-1"
-            >
-              <PhoneCall className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">{settings.support_phone}</span>
-            </a>
-          )}
-
-          <div className="text-muted-foreground">
+          <div className="text-muted-foreground font-brand">
             © {new Date().getFullYear()} Flipi
           </div>
         </div>

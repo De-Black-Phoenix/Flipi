@@ -125,7 +125,7 @@ export function GiverReviews({ giverId }: GiverReviewsProps) {
             </Avatar>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">
-                <p className="font-semibold text-sm">
+                <p className="text-sm user-name">
                   {review.receiver.full_name || "Anonymous"}
                 </p>
                 <span className="text-xs text-muted-foreground">

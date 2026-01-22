@@ -20,11 +20,7 @@ export default async function CampaignsPage() {
 
   return (
     <div className="h-full overflow-y-auto custom-scrollbar bg-background">
-      <div className="max-w-6xl mx-auto px-4 py-6">
-      <div className="mb-8">
-        <h1 className="text-4xl font-bold mb-2">Active Campaigns</h1>
-        <p className="text-gray-600">Support NGOs by donating items to their campaigns</p>
-      </div>
+      <div className="max-w-6xl mx-auto px-4 md:px-6 pt-2 md:pt-6 pb-20 md:pb-6">
 
       {!campaigns || campaigns.length === 0 ? (
         <Card>
@@ -34,7 +30,7 @@ export default async function CampaignsPage() {
           </CardContent>
         </Card>
       ) : (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           {campaigns.map((campaign: any) => (
             <Card key={campaign.id} className="hover:shadow-lg transition-shadow">
               <CardHeader>

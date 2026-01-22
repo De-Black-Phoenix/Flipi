@@ -1,13 +1,18 @@
 import type { Metadata } from "next";
-import { Raleway } from "next/font/google";
+import localFont from "next/font/local";
 import Script from "next/script";
 import "./globals.css";
 import { Providers } from "./providers";
 import { AppShell } from "@/components/app-shell/app-shell";
 
-const raleway = Raleway({ 
-  subsets: ["latin"],
-  variable: "--font-raleway",
+const bricolageGrotesque = localFont({
+  src: [
+    { path: "../public/fonts/BricolageGrotesque-Regular.ttf", weight: "400", style: "normal" },
+    { path: "../public/fonts/BricolageGrotesque-Medium.ttf", weight: "500", style: "normal" },
+    { path: "../public/fonts/BricolageGrotesque-SemiBold.ttf", weight: "600", style: "normal" },
+    { path: "../public/fonts/BricolageGrotesque-Bold.ttf", weight: "700", style: "normal" },
+  ],
+  variable: "--font-bricolage",
   display: "swap",
 });
 
@@ -27,7 +32,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="h-full">
-      <body className={`${raleway.variable} font-sans h-screen overflow-hidden`}>
+      <body className={`${bricolageGrotesque.variable} font-sans h-screen overflow-hidden`}>
         <Script
           src="https://js.paystack.co/v1/inline.js"
           strategy="lazyOnload"

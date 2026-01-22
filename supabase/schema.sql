@@ -628,4 +628,3 @@ CREATE TRIGGER trigger_update_item_like_count
   AFTER INSERT OR DELETE ON public.item_likes
   FOR EACH ROW
   EXECUTE FUNCTION update_item_like_count();
-

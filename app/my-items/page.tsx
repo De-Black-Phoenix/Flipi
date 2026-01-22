@@ -387,10 +387,10 @@ export default function MyItemsPage() {
 
   if (!items || items.length === 0) {
     return (
-      <div className="min-h-screen px-4 py-8 max-w-6xl mx-auto animate-in fade-in duration-300">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">My Items</h1>
-          <p className="text-gray-600">Manage your listings and conversations</p>
+      <div className="min-h-screen px-4 md:px-6 pt-4 md:pt-8 pb-20 md:pb-8 max-w-6xl mx-auto animate-in fade-in duration-300">
+        <div className="mb-4 md:mb-8">
+          <h1 className="text-xl md:text-3xl font-bold mb-2">My Items</h1>
+          <p className="text-sm md:text-base text-muted-foreground">Manage your listings and conversations</p>
         </div>
         <Card>
           <CardContent className="py-12 text-center">
@@ -409,7 +409,7 @@ export default function MyItemsPage() {
     <div className="h-full overflow-y-auto custom-scrollbar bg-background">
       <div className="max-w-6xl mx-auto h-full">
       {/* Back Button - Fixed at top */}
-      <div className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm py-4 -mx-4 px-4 border-b border-border/40 mb-4">
+      <div className="sticky top-12 md:top-0 z-50 bg-background/95 backdrop-blur-sm py-3 md:py-4 -mx-4 md:-mx-6 px-4 md:px-6 border-b border-border/40 mb-4 md:mb-6">
         <div className="flex items-center gap-4">
           <Button
             variant="ghost"
@@ -437,9 +437,9 @@ export default function MyItemsPage() {
 
       {/* Mobile header */}
       {isMobile && (
-        <div className="px-4 py-6">
-          <h1 className="text-3xl font-bold mb-2">My Items</h1>
-          <p className="text-gray-600">Manage your listings and conversations</p>
+        <div className="px-4 md:px-6 py-4 md:py-6">
+          <h1 className="text-xl md:text-3xl font-bold mb-2">My Items</h1>
+          <p className="text-sm md:text-base text-muted-foreground">Manage your listings and conversations</p>
         </div>
       )}
 
@@ -787,7 +787,7 @@ export default function MyItemsPage() {
                                   </Avatar>
                                   <div className="flex-1">
                                     <div className="flex items-center gap-2 mb-1">
-                                      <p className={`${hasUnread ? "font-bold" : "font-semibold"}`}>
+                                      <p className={`user-name ${hasUnread ? "font-bold" : "font-semibold"}`}>
                                         {conversation.profiles?.full_name || "Anonymous"}
                                       </p>
                                       {getStatusBadge()}

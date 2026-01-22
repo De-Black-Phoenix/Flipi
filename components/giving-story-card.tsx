@@ -280,15 +280,20 @@ export function GivingStoryCard({ item, currentUserId }: GivingStoryCardProps) {
   return (
     <>
       <Card className="overflow-hidden border-border/60 bg-card shadow-sm">
-        <div className="p-3 pb-2">
+        <div className="p-3 md:p-3 pb-2 md:pb-2">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2 min-w-0 flex-1">
               <Avatar className="h-7 w-7 shrink-0">
                 <AvatarImage src={owner?.avatar_url ?? undefined} />
                 <AvatarFallback>{owner?.full_name?.slice(0, 1) ?? "U"}</AvatarFallback>
               </Avatar>
-              <div className="min-w-0 text-xs text-muted-foreground truncate">
-                {owner?.full_name ?? "Unknown"} • {rankInfo.emoji} {rankInfo.name}
+              <div className="min-w-0">
+                <div className="text-xs truncate text-foreground">
+                  <span className="user-name">{owner?.full_name ?? "Unknown"}</span>
+                </div>
+                <div className="text-[11px] text-muted-foreground truncate">
+                  {rankInfo.emoji} {rankInfo.name}
+                </div>
               </div>
             </div>
 
@@ -298,10 +303,10 @@ export function GivingStoryCard({ item, currentUserId }: GivingStoryCardProps) {
                   <button
                     type="button"
                     aria-label="More"
-                    className="p-2 rounded-md hover:bg-muted/60 text-muted-foreground hover:text-foreground"
+                    className="p-1.5 rounded-md hover:bg-muted/60 text-muted-foreground hover:text-foreground"
                     onClick={(e) => e.stopPropagation()}
                   >
-                    <MoreHorizontal className="w-4 h-4" />
+                    <MoreHorizontal className="w-[18px] h-[18px]" />
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-44">
@@ -312,7 +317,7 @@ export function GivingStoryCard({ item, currentUserId }: GivingStoryCardProps) {
                     }}
                     className="gap-2"
                   >
-                    <Flag className="w-4 h-4" /> Report
+                    <Flag className="w-[18px] h-[18px]" /> Report
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -339,18 +344,20 @@ export function GivingStoryCard({ item, currentUserId }: GivingStoryCardProps) {
           </div>
         </Link>
 
-        <div className="p-3 space-y-2">
+        <div className="p-3 md:p-3 space-y-1.5">
 
           <div className="min-w-0">
             <Link href={`/items/${item.id}`} className="block">
-              <div className="font-semibold text-sm leading-tight truncate">{item.title}</div>
+              <div className="font-semibold text-sm leading-tight truncate font-[var(--font-bricolage)]">
+                {item.title}
+              </div>
             </Link>
-            <div className="text-xs text-muted-foreground truncate mt-1">
+            <div className="text-[11px] text-muted-foreground truncate mt-0.5">
               {item.category} • {conditionLabels[item.condition] ?? item.condition}
             </div>
           </div>
 
-          <div className="flex items-center gap-8 pt-1">
+          <div className="flex items-center gap-6 pt-1">
             <button
               type="button"
               onClick={(e) => {
@@ -395,7 +402,7 @@ export function GivingStoryCard({ item, currentUserId }: GivingStoryCardProps) {
               }`}
               aria-label="Share"
             >
-              <Share2 className="w-4 h-4" />
+              <Share2 className="w-[18px] h-[18px]" />
               <span>{shareCount}</span>
             </button>
           </div>

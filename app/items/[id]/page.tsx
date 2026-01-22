@@ -8,7 +8,7 @@ import { createClient } from "@/lib/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { MapPin, Calendar, User, Gift } from "lucide-react";
+import { MapPin, Calendar, User, Gift, ArrowLeft } from "lucide-react";
 import { RequestItemButton } from "@/components/request-item-button";
 import { ItemDetailSkeleton } from "@/components/skeletons/item-detail-skeleton";
 import { GiverReviews } from "@/components/giver-reviews";
@@ -108,7 +108,7 @@ export default function ItemDetailPage() {
   if (!item) {
     return (
       <div className="h-full overflow-y-auto custom-scrollbar bg-background">
-        <div className="max-w-4xl mx-auto px-4 py-6">
+        <div className="max-w-4xl mx-auto px-4 md:px-6 pt-4 md:pt-6 pb-20 md:pb-6">
           <Card>
             <CardContent className="py-12 text-center">
               <Gift className="w-12 h-12 text-gray-300 mx-auto mb-4" />
@@ -130,18 +130,21 @@ export default function ItemDetailPage() {
 
   return (
     <div className="h-full overflow-y-auto custom-scrollbar bg-background">
-      <div className="max-w-6xl mx-auto px-4 py-6">
-      <Link
-        href="/find"
-        className="text-blue-500 hover:underline mb-4 inline-flex items-center gap-2"
-      >
-        ← Back to items
-      </Link>
+      <div className="max-w-6xl mx-auto px-4 md:px-6 pt-1 md:pt-6 pb-20 md:pb-6">
+        <div className="mb-2 md:mb-6">
+          <Link
+            href="/find"
+            className="hidden md:inline-flex text-sm text-muted-foreground hover:text-foreground items-center gap-2"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back to items
+          </Link>
+        </div>
 
-      <div className="grid md:grid-cols-2 gap-6">
+      <div className="grid md:grid-cols-2 gap-4 md:gap-6">
         {/* Image Gallery */}
         <div className="space-y-3">
-          <div className="relative aspect-square rounded-lg overflow-hidden border bg-gray-100">
+          <div className="relative aspect-[4/3] md:aspect-square rounded-lg overflow-hidden border bg-gray-100">
             {currentImage ? (
               <Image
                 src={currentImage}
@@ -184,17 +187,17 @@ export default function ItemDetailPage() {
         </div>
 
         {/* Item Summary */}
-        <div className="space-y-4">
+        <div className="space-y-4 md:space-y-6">
           <div>
             <div className="flex items-start justify-between mb-2">
               <div className="flex-1">
-                <h1 className="text-2xl font-bold mb-1.5">{item.title}</h1>
+                <h1 className="text-lg md:text-2xl font-bold mb-1.5">{item.title}</h1>
                 <div className="flex items-center gap-2 mb-2">
-                  <span className="px-3 py-1 bg-gray-100 text-gray-700 text-sm font-medium rounded-full">
+                  <span className="px-2.5 py-1 bg-gray-100 text-gray-700 text-xs md:text-sm font-medium rounded-full">
                     {item.category}
                   </span>
                   <span
-                    className={`px-3 py-1 rounded-full text-sm font-medium ${
+                    className={`px-2.5 py-1 rounded-full text-xs md:text-sm font-medium ${
                       item.status === "available"
                         ? "bg-green-100 text-green-700"
                         : item.status === "reserved"
@@ -212,7 +215,7 @@ export default function ItemDetailPage() {
               </div>
             </div>
             {item.created_at && (
-              <div className="flex items-center gap-1 text-sm text-gray-500 mb-3">
+              <div className="flex items-center gap-1 text-sm text-muted-foreground mb-3">
                 <Calendar className="w-4 h-4" />
                 <span>Posted {formatDate(item.created_at)}</span>
               </div>
@@ -232,7 +235,7 @@ export default function ItemDetailPage() {
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex-1">
-                      <p className="font-semibold text-gray-900 text-sm">
+                      <p className="text-gray-900 text-sm user-name">
                         {owner.full_name || "Community Member"}
                       </p>
                       <div className="flex items-center gap-1 text-xs text-gray-600 mt-0.5">
@@ -258,14 +261,14 @@ export default function ItemDetailPage() {
 
           {/* Item Description */}
           <div>
-            <h2 className="font-semibold text-base mb-2">Description</h2>
+            <h2 className="font-semibold text-sm md:text-base mb-2">Description</h2>
             <div className="prose prose-sm max-w-none">
               {item.description ? (
-                <p className="text-gray-700 whitespace-pre-wrap leading-relaxed text-sm">
+                <p className="text-muted-foreground whitespace-pre-wrap leading-relaxed text-sm">
                   {item.description}
                 </p>
               ) : (
-                <p className="text-gray-400 italic text-sm">
+                <p className="text-muted-foreground italic text-sm">
                   No description provided for this item.
                 </p>
               )}
@@ -300,7 +303,7 @@ export default function ItemDetailPage() {
           </div>
 
           {/* Primary CTA */}
-          <div className="pt-3 border-t">
+          <div className="pt-3 md:border-t">
             {isOwner ? (
               <Card>
                 <CardContent className="pt-4">
@@ -318,7 +321,9 @@ export default function ItemDetailPage() {
                   <Link href={`/chat/${conversationId}`}>View Chat</Link>
                 </Button>
               ) : (
-                <RequestItemButton itemId={item.id} />
+                <div className="hidden md:block">
+                  <RequestItemButton itemId={item.id} />
+                </div>
               )
             ) : (
               <Card>

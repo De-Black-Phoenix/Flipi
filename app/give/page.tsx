@@ -636,159 +636,153 @@ export default function GiveItemPage() {
 
   return (
     <div className="h-full overflow-y-auto custom-scrollbar">
-      <div className="pl-6 pr-6 py-12 max-w-2xl mx-auto animate-in fade-in duration-300">
-      <div className="space-y-8">
-        <div>
-          <h1 className="text-3xl font-bold mb-2">Give an Item</h1>
-          <p className="text-muted-foreground">
-            Share something you no longer need with your community
-            {campaignId && " or support an NGO campaign"}
-          </p>
-        </div>
-        <form onSubmit={handleSubmit} className="space-y-8">
-            <div className="space-y-3">
-              <Label htmlFor="title">Title *</Label>
-              <Input
-                id="title"
-                placeholder="e.g., Vintage Coffee Table"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                required
-              />
-            </div>
+      <div className="px-4 md:px-6 pt-2 md:pt-8 pb-20 md:pb-12 max-w-2xl mx-auto animate-in fade-in duration-300">
+        <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
+          <div className="space-y-2 md:space-y-3">
+            <Label htmlFor="title" className="text-xs md:text-sm">Title *</Label>
+            <Input
+              id="title"
+              placeholder="e.g., Vintage Coffee Table"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              required
+            />
+          </div>
 
-            <div className="space-y-3">
-              <Label htmlFor="description">Description *</Label>
-              <Textarea
-                id="description"
-                placeholder="Tell us about the item..."
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                rows={4}
-                required
-              />
-            </div>
+          <div className="space-y-2 md:space-y-3">
+            <Label htmlFor="description" className="text-xs md:text-sm">Description *</Label>
+            <Textarea
+              id="description"
+              placeholder="Tell us about the item..."
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              rows={4}
+              className="text-xs md:text-sm min-h-[80px] md:min-h-[100px]"
+              required
+            />
+          </div>
 
-            <div className="grid md:grid-cols-2 gap-6">
-              <div className="space-y-3">
-                <Label htmlFor="category">Category *</Label>
-                <Select value={category} onValueChange={setCategory} required>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {CATEGORIES.map((cat) => (
-                      <SelectItem key={cat} value={cat}>
-                        {cat}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-3">
-                <Label htmlFor="condition">Condition *</Label>
-                <Select value={condition} onValueChange={setCondition} required>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select condition" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {CONDITIONS.map((cond) => (
-                      <SelectItem key={cond.value} value={cond.value}>
-                        {cond.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <div className="space-y-3">
-              <Label>Images (up to 5)</Label>
-              <div
-                {...getRootProps()}
-                className={`border-2 border-dashed rounded-lg p-12 text-center cursor-pointer transition-colors ${
-                  isDragActive
-                    ? "border-primary bg-primary/5"
-                    : "border-border hover:border-primary/50"
-                }`}
-              >
-                <input {...getInputProps()} />
-                <Upload className="w-8 h-8 mx-auto mb-2 text-gray-400" />
-                <p className="text-sm text-gray-600">
-                  {isDragActive
-                    ? "Drop images here"
-                    : "Drag & drop images here, or click to select"}
-                </p>
-                <p className="text-xs text-gray-400 mt-1">
-                  PNG, JPG, GIF up to 10MB
-                </p>
-              </div>
-              {uploading && (
-                <p className="text-sm text-gray-500 text-center">Uploading...</p>
-              )}
-              {images.length > 0 && (
-                <div className="grid grid-cols-4 gap-2 mt-4">
-                  {images.map((url, index) => (
-                    <div key={index} className="relative aspect-square rounded-lg overflow-hidden max-w-[120px]">
-                      <Image
-                        src={url}
-                        alt={`Upload ${index + 1}`}
-                        fill
-                        className="object-cover"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => removeImage(index)}
-                        className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1.5 hover:bg-red-600 shadow-sm"
-                      >
-                        <X className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
+          <div className="grid md:grid-cols-2 gap-3 md:gap-6">
+            <div className="space-y-2 md:space-y-3">
+              <Label htmlFor="category" className="text-xs md:text-sm">Category *</Label>
+              <Select value={category} onValueChange={setCategory} required>
+                <SelectTrigger className="h-8 md:h-10 text-xs md:text-sm">
+                  <SelectValue placeholder="Select category" />
+                </SelectTrigger>
+                <SelectContent>
+                  {CATEGORIES.map((cat) => (
+                    <SelectItem key={cat} value={cat}>
+                      {cat}
+                    </SelectItem>
                   ))}
-                </div>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2 md:space-y-3">
+              <Label htmlFor="condition" className="text-xs md:text-sm">Condition *</Label>
+              <Select value={condition} onValueChange={setCondition} required>
+                <SelectTrigger className="h-8 md:h-10 text-xs md:text-sm">
+                  <SelectValue placeholder="Select condition" />
+                </SelectTrigger>
+                <SelectContent>
+                  {CONDITIONS.map((cond) => (
+                    <SelectItem key={cond.value} value={cond.value}>
+                      {cond.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div className="space-y-2 md:space-y-3">
+            <Label className="text-xs md:text-sm">Images (up to 5)</Label>
+            <div
+              {...getRootProps()}
+              className={`border-2 border-dashed rounded-lg p-12 text-center cursor-pointer transition-colors ${
+                isDragActive
+                  ? "border-primary bg-primary/5"
+                  : "border-border hover:border-primary/50"
+              }`}
+            >
+              <input {...getInputProps()} />
+              <Upload className="w-8 h-8 mx-auto mb-2 text-gray-400" />
+              <p className="text-sm text-gray-600">
+                {isDragActive
+                  ? "Drop images here"
+                  : "Drag & drop images here, or click to select"}
+              </p>
+              <p className="text-xs text-gray-400 mt-1">
+                PNG, JPG, GIF up to 10MB
+              </p>
+            </div>
+            {uploading && (
+              <p className="text-sm text-gray-500 text-center">Uploading...</p>
+            )}
+            {images.length > 0 && (
+              <div className="grid grid-cols-4 gap-2 mt-4">
+                {images.map((url, index) => (
+                  <div key={index} className="relative aspect-square rounded-lg overflow-hidden max-w-[120px]">
+                    <Image
+                      src={url}
+                      alt={`Upload ${index + 1}`}
+                      fill
+                      className="object-cover"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeImage(index)}
+                      className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1.5 hover:bg-red-600 shadow-sm"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-3 md:gap-6">
+            <div className="space-y-2 md:space-y-3">
+              <Label htmlFor="region" className="text-xs md:text-sm">Region *</Label>
+              <SearchableSelect
+                options={REGIONS}
+                value={region}
+                onValueChange={(value) => {
+                  setRegion(value);
+                  setTown(""); // Clear town when region changes
+                }}
+                placeholder="Search or select region"
+                emptyMessage="No regions found"
+                className="h-8 md:h-10 text-xs md:text-sm"
+              />
+            </div>
+
+            <div className="space-y-2 md:space-y-3">
+              <Label htmlFor="town" className="text-xs md:text-sm">Town/City *</Label>
+              <SearchableSelect
+                options={region && REGION_TOWNS[region] ? REGION_TOWNS[region] : []}
+                value={town}
+                onValueChange={setTown}
+                placeholder={region ? "Search or select your town/city" : "Select a region first"}
+                disabled={!region}
+                emptyMessage={region ? "No towns found" : "Select a region first"}
+                className="h-8 md:h-10 text-xs md:text-sm"
+              />
+            </div>
+          </div>
+
+          <div className="flex justify-end">
+            <Button type="submit" className="w-auto" size="lg" disabled={loading || uploading}>
+              {loading || uploading ? (
+                <span>{uploading ? "Uploading images..." : "Listing item..."}</span>
+              ) : (
+                "List Item"
               )}
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-6">
-              <div className="space-y-3">
-                <Label htmlFor="region">Region *</Label>
-                <SearchableSelect
-                  options={REGIONS}
-                  value={region}
-                  onValueChange={(value) => {
-                    setRegion(value);
-                    setTown(""); // Clear town when region changes
-                  }}
-                  placeholder="Search or select region"
-                  emptyMessage="No regions found"
-                />
-              </div>
-
-              <div className="space-y-3">
-                <Label htmlFor="town">Town/City *</Label>
-                <SearchableSelect
-                  options={region && REGION_TOWNS[region] ? REGION_TOWNS[region] : []}
-                  value={town}
-                  onValueChange={setTown}
-                  placeholder={region ? "Search or select your town/city" : "Select a region first"}
-                  disabled={!region}
-                  emptyMessage={region ? "No towns found" : "Select a region first"}
-                />
-              </div>
-            </div>
-
-            <div className="flex justify-end">
-              <Button type="submit" className="w-auto" size="lg" disabled={loading || uploading}>
-                {loading || uploading ? (
-                  <span>{uploading ? "Uploading images..." : "Listing item..."}</span>
-                ) : (
-                  "List Item"
-                )}
-              </Button>
-            </div>
-          </form>
-        </div>
+            </Button>
+          </div>
+        </form>
       </div>
     </div>
   );

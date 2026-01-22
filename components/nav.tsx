@@ -205,7 +205,7 @@ export function Nav() {
     <nav className="border-b bg-white/85 backdrop-blur-xl sticky top-0 z-50 shadow-sm border-cream-200/20">
       <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
         {/* Brand Logo - Far Left (Mobile & Desktop) */}
-        <Link href="/home" className="text-2xl font-bold text-blue-500">
+        <Link href="/home" className="text-2xl font-bold text-blue-500 font-brand">
           🐬 Flipi
         </Link>
 
@@ -262,7 +262,7 @@ export function Nav() {
               <DropdownMenuContent className="w-56" align="end">
                 <DropdownMenuLabel>
                   <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium">{profile?.full_name || "User"}</p>
+                    <p className="text-sm user-name">{profile?.full_name || "User"}</p>
                     <p className="text-xs text-muted-foreground">{user.email}</p>
                   </div>
                 </DropdownMenuLabel>

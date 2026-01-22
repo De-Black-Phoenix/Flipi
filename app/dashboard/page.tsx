@@ -187,20 +187,22 @@ export default function DashboardPage() {
 
   return (
     <div className="h-full overflow-y-auto custom-scrollbar bg-background">
-      <div className="px-4 py-4 max-w-7xl mx-auto">
+      <div className="px-4 md:px-6 pt-4 md:pt-6 pb-20 md:pb-6 max-w-7xl mx-auto">
         {/* Header Section */}
-        <div className="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4 pt-4 mt-4">
+        <div className="mb-4 md:mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
             <p className="text-xs text-muted-foreground mb-1 font-normal">{currentDate}</p>
-            <h1 className="text-2xl md:text-3xl font-bold text-foreground leading-tight">
+            <h1 className="text-xl md:text-3xl font-bold text-foreground leading-tight mb-1">
               Good {new Date().getHours() < 12 ? "morning" : new Date().getHours() < 18 ? "afternoon" : "evening"}
-              {profile.full_name ? `, ${profile.full_name.split(" ")[0]}` : ""}
+              {profile.full_name && (
+                <span className="user-name">, {profile.full_name.split(" ")[0]}</span>
+              )}
         </h1>
           </div>
       </div>
 
         {/* Stats Cards Grid - Monochrome, minimalist */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8">
           <Card className="hover:border-primary/50">
             <CardHeader className="pb-2">
               <CardTitle className="text-xs font-normal text-muted-foreground uppercase tracking-wider">Your Rank</CardTitle>

@@ -110,7 +110,7 @@ export default function AdminPage() {
                       <div>
                         <CardTitle>{ngo.name}</CardTitle>
                         <CardDescription>
-                          Admin: {ngo.profiles?.full_name || ngo.profiles?.email}
+                          Admin: <span className="user-name">{ngo.profiles?.full_name || ngo.profiles?.email}</span>
                         </CardDescription>
                       </div>
                       <div className="flex gap-2">
@@ -156,7 +156,7 @@ export default function AdminPage() {
                   <CardHeader>
                     <div className="flex justify-between items-start">
                       <div>
-                        <CardTitle>{user.full_name || "Anonymous"}</CardTitle>
+                        <CardTitle className="user-name">{user.full_name || "Anonymous"}</CardTitle>
                         <CardDescription>{user.email}</CardDescription>
                       </div>
                       <div className="flex gap-2">

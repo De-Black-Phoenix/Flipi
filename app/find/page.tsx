@@ -216,23 +216,18 @@ export default function FindItemsPage() {
 
   return (
     <div className="h-full overflow-y-auto custom-scrollbar bg-background">
-      <div className="max-w-6xl mx-auto px-4 py-3">
-      {/* Compact Header */}
-      <div className="mb-3">
-        <h1 className="text-xl font-bold">Find Items</h1>
-      </div>
-
+      <div className="max-w-6xl mx-auto px-4 md:px-6 py-2 md:py-6">
       {/* Modern Compact Search and Filters */}
-      <div className="mb-8 space-y-4">
+      <div className="mb-3 md:mb-6 space-y-2 md:space-y-4">
         {/* Search Bar - Compact */}
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+          <Search className="absolute left-2.5 md:left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-3.5 h-3.5 md:w-4 md:h-4" />
           <Input
             type="text"
             placeholder="Search items..."
             value={searchKeyword}
             onChange={(e) => setSearchKeyword(e.target.value)}
-            className="pl-9 pr-9 h-9 text-sm"
+            className="pl-8 pr-8 h-8 md:h-9 text-xs md:text-sm"
           />
           {searchKeyword && (
             <button
@@ -248,7 +243,7 @@ export default function FindItemsPage() {
         <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide">
             <button
               onClick={() => setSelectedCategory("")}
-            className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
+            className={`px-2 md:px-3 py-1 md:py-1.5 rounded-full text-[10px] md:text-xs font-medium whitespace-nowrap transition-colors ${
                 !selectedCategory
                 ? "bg-primary text-primary-foreground"
                 : "text-muted-foreground border border-border hover:bg-primary/10 hover:text-primary"
@@ -260,7 +255,7 @@ export default function FindItemsPage() {
               <button
                 key={category}
                 onClick={() => setSelectedCategory(category)}
-              className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
+              className={`px-2 md:px-3 py-1 md:py-1.5 rounded-full text-[10px] md:text-xs font-medium whitespace-nowrap transition-colors ${
                   selectedCategory === category
                   ? "bg-primary text-primary-foreground"
                   : "text-muted-foreground border border-border hover:bg-primary/10 hover:text-primary"
@@ -272,16 +267,16 @@ export default function FindItemsPage() {
           </div>
 
         {/* Location Filters Row - Compact Single Line */}
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-row md:flex-wrap items-center gap-2">
           {/* Region Filter */}
-          <div className="w-auto min-w-[180px] md:min-w-[200px]">
+          <div className="w-auto flex-1 md:flex-none min-w-0 md:min-w-[180px]">
             <SearchableSelect
               options={REGIONS}
               value={selectedRegion || ""}
               onValueChange={(value) => setSelectedRegion(value || "")}
-              placeholder="All Regions (search to filter)"
+              placeholder="All Regions"
               emptyMessage="No regions found"
-              className="h-9 text-sm"
+              className="flex-1 min-w-0 md:flex-none [&_input]:h-8 [&_input]:md:h-9 [&_input]:text-xs [&_input]:md:text-sm"
             />
         </div>
 
@@ -291,7 +286,7 @@ export default function FindItemsPage() {
             placeholder="Town/City"
             value={selectedTown}
             onChange={(e) => setSelectedTown(e.target.value)}
-            className="h-9 w-auto min-w-[150px] md:min-w-[200px] text-sm flex-1 max-w-[220px]"
+              className="h-8 md:h-9 flex-1 md:flex-none min-w-0 md:min-w-[150px] md:max-w-[220px] text-xs md:text-sm"
           />
 
           {/* Clear Filters Button - Compact */}
@@ -300,7 +295,7 @@ export default function FindItemsPage() {
               variant="ghost"
               size="sm"
               onClick={clearFilters}
-              className="h-9 px-2 text-xs text-muted-foreground hover:text-foreground"
+              className="h-8 md:h-9 px-2 text-[10px] md:text-xs text-muted-foreground hover:text-foreground"
             >
               <X className="w-3.5 h-3.5 mr-1" />
               Clear
@@ -311,7 +306,7 @@ export default function FindItemsPage() {
 
       {/* Results */}
       {loading ? (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           {[1, 2, 3, 4, 5, 6].map((i) => (
             <ItemCardSkeleton key={i} />
           ))}
@@ -339,10 +334,10 @@ export default function FindItemsPage() {
         </Card>
       ) : (
         <>
-          <div className="mb-4 text-sm text-gray-600">
+          <div className="mb-4 text-sm text-gray-600 hidden md:block">
             Found {items.length} item{items.length !== 1 ? "s" : ""}
           </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
             {loading ? (
               Array.from({ length: 6 }).map((_, i) => (
                 <ItemCardSkeleton key={i} />

@@ -555,7 +555,7 @@ export default function ChatPage() {
                                 )}
                               </div>
                               <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">
-                                {otherParticipant?.full_name || "User"}
+                                <span className="user-name">{otherParticipant?.full_name || "User"}</span>
                               </p>
                             </div>
                           </div>
@@ -590,7 +590,7 @@ export default function ChatPage() {
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1 min-w-0">
-                <h2 className="font-semibold text-base text-foreground">{otherParticipant?.full_name || "User"}</h2>
+                <h2 className="text-base text-foreground user-name">{otherParticipant?.full_name || "User"}</h2>
                 <p className="text-xs text-muted-foreground line-clamp-1">{item?.title || "Item"}</p>
               </div>
               {conversation.status === "accepted" && (

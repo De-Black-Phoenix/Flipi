@@ -225,9 +225,9 @@ export default function UserProfilePage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-4xl mx-auto px-4 pt-8 md:pt-12 pb-8 md:pb-12">
+      <div className="max-w-4xl mx-auto px-4 md:px-6 pt-4 md:pt-8 pb-20 md:pb-12">
         {/* Back Button - Fixed at top */}
-        <div className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm py-4 -mx-4 px-4 border-b border-border/40 mb-8">
+        <div className="sticky top-14 md:top-0 z-50 bg-background/95 backdrop-blur-sm py-3 md:py-4 -mx-4 md:-mx-6 px-4 md:px-6 border-b border-border/40 mb-6 md:mb-8">
           <div className="flex items-center gap-4">
             <Button
               variant="ghost"
@@ -239,25 +239,25 @@ export default function UserProfilePage() {
             </Button>
             {isScrolled && (
               <h1 className="text-lg font-semibold text-foreground transition-opacity duration-200">
-                {profile.full_name || "User Profile"}
+                <span className="user-name">{profile.full_name || "User Profile"}</span>
               </h1>
             )}
           </div>
         </div>
 
         {/* Profile Header */}
-        <div className="mb-8 mt-4">
-          <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
-            <Avatar className="w-24 h-24 md:w-32 md:h-32 ring-2 ring-background">
+        <div className="mb-6 md:mb-8">
+          <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-6">
+            <Avatar className="w-20 h-20 md:w-32 md:h-32 ring-2 ring-background">
               <AvatarImage src={profile.avatar_url || undefined} />
               <AvatarFallback className="text-2xl md:text-3xl bg-primary/10 text-primary font-medium">
                 {profile.full_name?.charAt(0) || "U"}
               </AvatarFallback>
             </Avatar>
             <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-3 mb-2">
-                <h1 className="text-2xl md:text-3xl font-bold">
-                  {profile.full_name || "Anonymous"}
+              <div className="flex items-center gap-2 md:gap-3 mb-2">
+                <h1 className="text-lg md:text-3xl font-bold">
+                  <span className="user-name">{profile.full_name || "Anonymous"}</span>
                 </h1>
                 {profile.rank && (
                   <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20">

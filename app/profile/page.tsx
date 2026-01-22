@@ -271,9 +271,9 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-4xl mx-auto px-4 pt-8 md:pt-12 pb-8 md:pb-12">
+      <div className="max-w-4xl mx-auto px-4 md:px-6 pt-4 md:pt-8 pb-20 md:pb-12">
         {/* Back Button - Fixed at top */}
-        <div className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm py-4 -mx-4 px-4 border-b border-border/40 mb-8">
+        <div className="sticky top-14 md:top-0 z-50 bg-background/95 backdrop-blur-sm py-3 md:py-4 -mx-4 md:-mx-6 px-4 md:px-6 border-b border-border/40 mb-6 md:mb-8">
           <div className="flex items-center gap-4">
             <Button
               variant="ghost"
@@ -292,14 +292,14 @@ export default function ProfilePage() {
         </div>
 
         {/* Header */}
-        <div className="text-center mb-8 mt-4">
-          <Avatar className="w-24 h-24 mx-auto mb-4 border-4 border-primary/20">
+        <div className="text-center mb-6 md:mb-8">
+          <Avatar className="w-20 h-20 md:w-24 md:h-24 mx-auto mb-4 border-4 border-primary/20">
             <AvatarImage src={profile.avatar_url || undefined} />
-            <AvatarFallback className="bg-primary/10 text-primary text-2xl font-bold">
+            <AvatarFallback className="bg-primary/10 text-primary text-xl md:text-2xl font-bold">
               {profile.full_name?.charAt(0)?.toUpperCase() || "U"}
             </AvatarFallback>
           </Avatar>
-          <h1 className="text-3xl font-bold mb-2">{profile.full_name || "User"}</h1>
+          <h1 className="text-xl md:text-3xl font-bold mb-2 user-name">{profile.full_name || "User"}</h1>
           <div className="flex items-center justify-center gap-2 text-muted-foreground">
             <MapPin className="w-4 h-4" />
             <span className="text-sm">{profile.town || profile.region || "Ghana"}</span>
@@ -307,7 +307,7 @@ export default function ProfilePage() {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid md:grid-cols-3 gap-4 mb-8">
+        <div className="grid md:grid-cols-3 gap-4 md:gap-6 mb-6 md:mb-8">
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-xs font-normal text-muted-foreground uppercase tracking-wider">Rank</CardTitle>

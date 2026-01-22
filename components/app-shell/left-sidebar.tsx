@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
@@ -37,10 +37,21 @@ export function LeftSidebar() {
   const [user, setUser] = useState<any>(null);
   const [profile, setProfile] = useState<any>(null);
   const [unreadCount, setUnreadCount] = useState<number>(0);
+  const navFontProbeRef = useRef<HTMLButtonElement>(null);
   const supabase = createClient();
 
   // Load user and unread count
   useEffect(() => {
+    if (!navFontProbeRef.current) return;
+    const computed = window.getComputedStyle(navFontProbeRef.current);
+    const bodyComputed = window.getComputedStyle(document.body);
+    const rootComputed = window.getComputedStyle(document.documentElement);
+    // #region agent log
+    fetch('http://127.0.0.1:7243/ingest/f26d9da2-ab06-4244-a454-eea51bd6aa25',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'left-sidebar.tsx:48',message:'desktop nav font computed',data:{fontFamily:computed.fontFamily,fontWeight:computed.fontWeight,className:navFontProbeRef.current.className},timestamp:Date.now(),sessionId:'debug-session',runId:'pre-fix',hypothesisId:'H5'})}).catch(()=>{});
+    // #endregion
+    // #region agent log
+    fetch('http://127.0.0.1:7243/ingest/f26d9da2-ab06-4244-a454-eea51bd6aa25',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'left-sidebar.tsx:52',message:'font vars desktop',data:{bodyVar:bodyComputed.getPropertyValue('--font-bricolage').trim(),rootVar:rootComputed.getPropertyValue('--font-bricolage').trim(),bodyFontFamily:bodyComputed.fontFamily,rootFontFamily:rootComputed.fontFamily},timestamp:Date.now(),sessionId:'debug-session',runId:'pre-fix',hypothesisId:'H4'})}).catch(()=>{});
+    // #endregion
     const loadUnreadCount = async (userId: string) => {
       const { count } = await supabase
         .from("conversations")
@@ -168,7 +179,7 @@ export function LeftSidebar() {
     <aside className="hidden md:flex flex-col w-64 h-screen border-r border-border bg-background sticky top-0">
       {/* Logo */}
       <div className="flex items-center gap-2 px-6 py-4 border-b border-border">
-        <Link href="/home" className="text-2xl font-bold text-blue-500">
+        <Link href="/home" className="text-2xl font-bold text-blue-500 font-brand">
           🐬 Flipi
         </Link>
       </div>
@@ -184,10 +195,11 @@ export function LeftSidebar() {
               <Link key={item.href} href={item.href} className="block">
                 <Button
                   variant="ghost"
-                  className={`w-full justify-start gap-3 px-4 py-3 rounded-[24px] transition-all ${
+                ref={item.href === "/home" ? navFontProbeRef : undefined}
+                  className={`w-full justify-start gap-3 px-4 py-3 rounded-[24px] transition-all font-[var(--font-bricolage)] font-semibold ${
                     active 
                       ? "bg-primary/10 text-primary font-semibold hover:bg-primary/10 hover:text-primary" 
-                      : "hover:bg-primary/10 hover:text-primary text-foreground font-normal"
+                      : "hover:bg-primary/10 hover:text-primary text-foreground"
                   }`}
                 >
                   <Icon className="w-5 h-5" />
@@ -206,7 +218,7 @@ export function LeftSidebar() {
           {giveItemLink.auth && user && (
             <Link href={giveItemLink.href} className="block">
               <Button
-                className="w-full justify-start gap-3 px-4 py-3 rounded-[24px] bg-primary text-primary-foreground hover:bg-primary/90 font-semibold shadow-sm"
+                className="w-full justify-start gap-3 px-4 py-3 rounded-[24px] bg-primary text-primary-foreground hover:bg-primary/90 font-[var(--font-bricolage)] font-semibold shadow-sm"
               >
                 <PlusCircle className="w-5 h-5" />
                 <span>{giveItemLink.label}</span>
@@ -219,10 +231,10 @@ export function LeftSidebar() {
             <Link href="/dashboard" className="block">
               <Button
                 variant="ghost"
-                className={`w-full justify-start gap-3 px-4 py-3 rounded-[24px] transition-all ${
+                className={`w-full justify-start gap-3 px-4 py-3 rounded-[24px] transition-all font-[var(--font-bricolage)] font-semibold ${
                   isActive("/dashboard")
                     ? "bg-primary/10 text-primary font-semibold mb-2 hover:bg-primary/10 hover:text-primary" 
-                    : "hover:bg-primary/10 hover:text-primary text-foreground font-normal"
+                    : "hover:bg-primary/10 hover:text-primary text-foreground"
                 }`}
               >
                 <LayoutDashboard className="w-5 h-5" />
@@ -236,10 +248,10 @@ export function LeftSidebar() {
             <Link href="/ngo/dashboard" className="block">
               <Button
                 variant="ghost"
-                className={`w-full justify-start gap-3 px-4 py-3 rounded-[24px] transition-all ${
+                className={`w-full justify-start gap-3 px-4 py-3 rounded-[24px] transition-all font-[var(--font-bricolage)] font-semibold ${
                   isActive("/ngo/dashboard")
                     ? "bg-primary/10 text-primary font-semibold mb-2 hover:bg-primary/10 hover:text-primary"
-                    : "hover:bg-primary/10 hover:text-primary text-foreground font-normal"
+                    : "hover:bg-primary/10 hover:text-primary text-foreground"
                 }`}
               >
                 <Users className="w-5 h-5" />
@@ -251,10 +263,10 @@ export function LeftSidebar() {
             <Link href="/admin" className="block">
               <Button
                 variant="ghost"
-                className={`w-full justify-start gap-3 px-4 py-3 rounded-[24px] transition-all ${
+                className={`w-full justify-start gap-3 px-4 py-3 rounded-[24px] transition-all font-[var(--font-bricolage)] font-semibold ${
                   isActive("/admin")
                     ? "bg-primary/10 text-primary font-semibold mb-2 hover:bg-primary/10 hover:text-primary"
-                    : "hover:bg-primary/10 hover:text-primary text-foreground font-normal"
+                    : "hover:bg-primary/10 hover:text-primary text-foreground"
                 }`}
               >
                 <Users className="w-5 h-5" />
@@ -278,7 +290,7 @@ export function LeftSidebar() {
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex-1 text-left min-w-0">
-                  <p className="text-sm font-semibold truncate">
+                  <p className="text-sm truncate user-name">
                     {profile?.full_name || "User"}
                   </p>
                   {profile?.user_type === "platform_admin" ? (

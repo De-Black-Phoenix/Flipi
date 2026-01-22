@@ -62,9 +62,9 @@ export default function SupportPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-4xl mx-auto px-4 pt-8 md:pt-12 pb-8 md:pb-12">
+      <div className="max-w-4xl mx-auto px-4 md:px-6 pt-4 md:pt-8 pb-20 md:pb-12">
         {/* Back Button */}
-        <div className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm py-4 -mx-4 px-4 border-b border-border/40 mb-8">
+        <div className="sticky top-12 md:top-0 z-50 bg-background/95 backdrop-blur-sm py-3 md:py-4 -mx-4 md:-mx-6 px-4 md:px-6 border-b border-border/40 mb-4 md:mb-8">
           <div className="flex items-center gap-4">
             <Button
               variant="ghost"
@@ -81,18 +81,18 @@ export default function SupportPage() {
         </div>
 
         {/* Header */}
-        <div className="text-center mb-12 mt-4">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
-            <HelpCircle className="w-8 h-8 text-primary" />
+        <div className="text-center mb-6 md:mb-12 mt-4">
+          <div className="inline-flex items-center justify-center w-14 h-14 md:w-16 md:h-16 rounded-full bg-primary/10 mb-3 md:mb-4">
+            <HelpCircle className="w-7 h-7 md:w-8 md:h-8 text-primary" />
           </div>
-          <h1 className="text-4xl font-bold mb-4">Support Center</h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          <h1 className="text-xl md:text-3xl font-bold mb-3 md:mb-4">Support Center</h1>
+          <p className="text-sm md:text-base text-muted-foreground max-w-2xl mx-auto">
             We're here to help! Get assistance with your account or platform questions.
           </p>
         </div>
 
         {/* Contact Methods */}
-        <div className="grid md:grid-cols-2 gap-4 mb-8">
+        <div className="grid md:grid-cols-2 gap-4 md:gap-6 mb-6 md:mb-8">
           {settings?.support_email && (
             <Card className="hover:border-primary/50 hover:shadow-lg transition-all">
               <CardContent className="p-6 flex flex-col items-center text-center">
@@ -131,7 +131,7 @@ export default function SupportPage() {
         {/* Helpful Links */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-2xl">Helpful Resources</CardTitle>
+            <CardTitle className="text-lg md:text-2xl">Helpful Resources</CardTitle>
             <CardDescription>Learn more about Flipi</CardDescription>
           </CardHeader>
           <CardContent className="grid md:grid-cols-2 gap-4">

@@ -189,7 +189,7 @@ export function SearchableSelect({
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
           disabled={disabled}
-          className="pr-20"
+          className="pr-12 md:pr-20"
         />
         <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
           {value && !disabled && (

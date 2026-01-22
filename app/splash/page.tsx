@@ -56,7 +56,7 @@ export default function SplashPage() {
         
         {/* Brand Name */}
         <div className="flex flex-col items-center gap-2">
-          <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-600 via-cyan-600 to-teal-600 bg-clip-text text-transparent">
+          <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-600 via-cyan-600 to-teal-600 bg-clip-text text-transparent font-brand">
             Flipi
           </h1>
           <p className="text-lg text-gray-600 font-medium">
