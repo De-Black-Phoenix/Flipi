@@ -183,9 +183,9 @@ export default function HomePage() {
         </DialogContent>
       </Dialog>
 
-      <div className="h-full flex flex-col overflow-hidden bg-background">
+      <div className="min-h-full flex flex-col bg-background">
         {/* Main Content - Centered */}
-        <div className="flex-1 flex items-center justify-center px-4 md:px-6 py-6 md:py-8">
+        <div className="flex-1 flex items-start justify-center px-4 md:px-6 pt-4 pb-6 md:pt-6 md:pb-8">
           <div className="text-center max-w-2xl mx-auto">
             <h1 className="text-2xl md:text-4xl font-bold text-foreground mb-3 leading-tight">
             Need it? <span className="text-primary font-brand">Flipi.</span>
@@ -205,7 +205,7 @@ export default function HomePage() {
         </div>
 
         {/* Top Givers Section */}
-        <div className="flex-shrink-0 px-4 md:px-6 py-8 md:py-12 border-t border-border -mt-4">
+        <div className="flex-shrink-0 px-4 md:px-6 py-6 md:py-10 border-t border-border">
           <div className="max-w-4xl mx-auto">
             {/* Section Title */}
             <div className="mb-4 md:mb-6 text-center">

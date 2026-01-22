@@ -6,7 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { ArrowLeft, Menu } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { useMobileSidebar } from "./mobile-sidebar";
 
 export function MobileTopBar() {
@@ -98,30 +98,20 @@ export function MobileTopBar() {
           )}
         </div>
         {!showBackButton && (
-          user && profile ? (
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setIsOpen(true)}
-              className="h-9 w-9"
-            >
-              <Avatar className="w-7 h-7">
-                <AvatarImage src={profile.avatar_url} />
-                <AvatarFallback className="bg-primary/10 text-primary text-sm">
-                  {profile.full_name?.charAt(0) || "U"}
-                </AvatarFallback>
-              </Avatar>
-            </Button>
-          ) : (
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setIsOpen(true)}
-              className="h-9 w-9"
-            >
-              <Menu className="w-4 h-4" />
-            </Button>
-          )
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setIsOpen(true)}
+            className="h-9 w-9"
+            aria-label="Open menu"
+          >
+            <Avatar className="w-7 h-7">
+              <AvatarImage src={profile?.avatar_url} />
+              <AvatarFallback className="bg-primary/10 text-primary text-sm">
+                {profile?.full_name?.charAt(0) || user?.email?.charAt(0) || "U"}
+              </AvatarFallback>
+            </Avatar>
+          </Button>
         )}
       </div>
     </div>

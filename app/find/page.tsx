@@ -215,7 +215,7 @@ export default function FindItemsPage() {
     (selectedRegion && selectedRegion !== userRegion);
 
   return (
-    <div className="h-full overflow-y-auto custom-scrollbar bg-background">
+    <div className="min-h-full bg-background">
       <div className="max-w-6xl mx-auto px-4 md:px-6 py-2 md:py-6">
       {/* Modern Compact Search and Filters */}
       <div className="mb-3 md:mb-6 space-y-2 md:space-y-4">

@@ -20,7 +20,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Gift, Home, Heart, Users, LogOut, MessageSquare, Menu } from "lucide-react";
+import { Gift, Home, Heart, Users, LogOut, MessageSquare } from "lucide-react";
 
 export function Nav() {
   const pathname = usePathname();
@@ -326,7 +326,7 @@ export function Nav() {
           )}
         </div>
 
-        {/* Mobile: Hamburger Menu - Far Right */}
+        {/* Mobile: Avatar Menu - Far Right */}
         <div className="md:hidden">
           <Button
             variant="ghost"
@@ -335,7 +335,12 @@ export function Nav() {
             className="p-2"
             aria-label="Open menu"
           >
-            <Menu className="w-6 h-6" />
+            <Avatar className="h-8 w-8">
+              <AvatarImage src={profile?.avatar_url} />
+              <AvatarFallback>
+                {profile?.full_name?.charAt(0) || user?.email?.charAt(0) || "U"}
+              </AvatarFallback>
+            </Avatar>
           </Button>
         </div>
       </div>
