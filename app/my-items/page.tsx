@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { MessageSquare, Gift, Edit2, Check, X, MapPin, Calendar, Trash2, ArrowLeft } from "lucide-react";
+import { MessageSquare, Gift, Edit2, Check, X, MapPin, Calendar, Trash2 } from "lucide-react";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import { useAuthGuard } from "@/hooks/use-auth-guard";
@@ -48,7 +48,6 @@ export default function MyItemsPage() {
   const [loadingItem, setLoadingItem] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
   const hasAutoSelectedRef = useRef(false);
   const router = useRouter();
   const supabase = createClient();
@@ -72,41 +71,6 @@ export default function MyItemsPage() {
     checkMobile();
     window.addEventListener("resize", checkMobile);
     return () => window.removeEventListener("resize", checkMobile);
-  }, []);
-
-  // Scroll detection for sticky title
-  useEffect(() => {
-    let scrollContainer: HTMLElement | null = null;
-    let timeoutId: NodeJS.Timeout;
-
-    const handleScroll = () => {
-      if (scrollContainer) {
-        setIsScrolled(scrollContainer.scrollTop > 100);
-      } else {
-        setIsScrolled(window.scrollY > 100);
-      }
-    };
-
-    timeoutId = setTimeout(() => {
-      // Try to find the scroll container - check for AppShell's scroll container first, then the page's own container
-      scrollContainer = document.querySelector('main div.overflow-y-auto') as HTMLElement;
-      if (!scrollContainer) {
-        scrollContainer = document.querySelector('.h-full.overflow-y-auto.custom-scrollbar') as HTMLElement;
-      }
-      const target = scrollContainer || window;
-      
-      target.addEventListener("scroll", handleScroll, { passive: true });
-      handleScroll();
-    }, 100);
-
-    return () => {
-      clearTimeout(timeoutId);
-      if (scrollContainer) {
-        scrollContainer.removeEventListener("scroll", handleScroll);
-      } else {
-        window.removeEventListener("scroll", handleScroll);
-      }
-    };
   }, []);
 
   // Load items list
@@ -387,9 +351,9 @@ export default function MyItemsPage() {
 
   if (!items || items.length === 0) {
     return (
-      <div className="min-h-screen px-4 md:px-6 pt-4 md:pt-8 pb-20 md:pb-8 max-w-6xl mx-auto animate-in fade-in duration-300">
+      <div className="min-h-screen px-4 md:px-6 pt-3 md:pt-8 pb-20 md:pb-8 max-w-6xl mx-auto animate-in fade-in duration-300">
         <div className="mb-4 md:mb-8">
-          <h1 className="text-xl md:text-3xl font-bold mb-2">My Items</h1>
+          <h1 className="text-lg md:text-3xl font-bold mb-2">My Items</h1>
           <p className="text-sm md:text-base text-muted-foreground">Manage your listings and conversations</p>
         </div>
         <Card>
@@ -408,25 +372,6 @@ export default function MyItemsPage() {
   return (
     <div className="h-full overflow-y-auto custom-scrollbar bg-background">
       <div className="max-w-6xl mx-auto h-full">
-      {/* Back Button - Fixed at top */}
-      <div className="sticky top-12 md:top-0 z-50 bg-background/95 backdrop-blur-sm py-3 md:py-4 -mx-4 md:-mx-6 px-4 md:px-6 border-b border-border/40 mb-4 md:mb-6">
-        <div className="flex items-center gap-4">
-          <Button
-            variant="ghost"
-            onClick={() => router.back()}
-            className="border-transparent hover:bg-transparent hover:border hover:border-primary/20 hover:text-foreground"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back
-          </Button>
-          {isScrolled && (
-            <h1 className="text-lg font-semibold text-foreground transition-opacity duration-200">
-              My Items
-            </h1>
-          )}
-        </div>
-      </div>
-      
       {/* Header - only on desktop */}
       {!isMobile && (
         <div className="px-4 py-6">
@@ -436,12 +381,7 @@ export default function MyItemsPage() {
       )}
 
       {/* Mobile header */}
-      {isMobile && (
-        <div className="px-4 md:px-6 py-4 md:py-6">
-          <h1 className="text-xl md:text-3xl font-bold mb-2">My Items</h1>
-          <p className="text-sm md:text-base text-muted-foreground">Manage your listings and conversations</p>
-        </div>
-      )}
+      {isMobile && null}
 
       {/* Split view - desktop only */}
       {!isMobile ? (

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Gift } from "lucide-react";
+import { Gift } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useAuthGuard } from "@/hooks/use-auth-guard";
 import { GivingStoryCard } from "@/components/giving-story-card";
@@ -14,41 +14,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 export default function SavedItemsPage() {
   const [savedItems, setSavedItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
   const router = useRouter();
   const supabase = createClient();
   const { user } = useAuthGuard({ requireAuth: true });
-
-  // Scroll detection
-  useEffect(() => {
-    let scrollContainer: HTMLElement | null = null;
-    let timeoutId: NodeJS.Timeout;
-
-    const handleScroll = () => {
-      if (scrollContainer) {
-        setIsScrolled(scrollContainer.scrollTop > 100);
-      } else {
-        setIsScrolled(window.scrollY > 100);
-      }
-    };
-
-    timeoutId = setTimeout(() => {
-      scrollContainer = document.querySelector('main div.overflow-y-auto') as HTMLElement;
-      const target = scrollContainer || window;
-      
-      target.addEventListener("scroll", handleScroll, { passive: true });
-      handleScroll();
-    }, 100);
-
-    return () => {
-      clearTimeout(timeoutId);
-      if (scrollContainer) {
-        scrollContainer.removeEventListener("scroll", handleScroll);
-      } else {
-        window.removeEventListener("scroll", handleScroll);
-      }
-    };
-  }, []);
 
   // Load saved items
   useEffect(() => {
@@ -103,29 +71,10 @@ export default function SavedItemsPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-4xl mx-auto px-4 md:px-6 pt-4 md:pt-8 pb-20 md:pb-12">
-        {/* Back Button - Fixed at top */}
-        <div className="sticky top-14 md:top-0 z-50 bg-background/95 backdrop-blur-sm py-3 md:py-4 -mx-4 md:-mx-6 px-4 md:px-6 border-b border-border/40 mb-6 md:mb-8">
-          <div className="flex items-center gap-4">
-            <Button
-              variant="ghost"
-              onClick={() => router.back()}
-              className="border-transparent hover:bg-transparent hover:border hover:border-primary/20 hover:text-foreground"
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back
-            </Button>
-            {isScrolled && (
-              <h1 className="text-lg font-semibold text-foreground transition-opacity duration-200">
-                Saved Items
-              </h1>
-            )}
-          </div>
-        </div>
-
+      <div className="max-w-4xl mx-auto px-4 md:px-6 pt-3 md:pt-8 pb-20 md:pb-12">
         {/* Header */}
-        <div className="mb-6 md:mb-8">
-          <h1 className="text-2xl md:text-3xl font-bold mb-2">Saved Items</h1>
+        <div className="hidden md:block mb-6 md:mb-8">
+          <h1 className="text-lg md:text-3xl font-bold mb-2">Saved Items</h1>
           <p className="text-sm md:text-base text-muted-foreground">
             Items you've saved for later
           </p>

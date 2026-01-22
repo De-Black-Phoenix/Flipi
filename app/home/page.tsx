@@ -215,11 +215,7 @@ export default function HomePage() {
 
             {/* Top Givers Cards - Seamless Infinite Scroll */}
             {originalGivers.length > 0 ? (
-              <div className="relative overflow-hidden w-full">
-                {/* Left fade gradient */}
-                <div className="absolute left-0 top-0 bottom-0 w-12 md:w-20 bg-gradient-to-r from-background via-background/80 to-transparent z-10 pointer-events-none" />
-                {/* Right fade gradient */}
-                <div className="absolute right-0 top-0 bottom-0 w-12 md:w-20 bg-gradient-to-l from-background via-background/80 to-transparent z-10 pointer-events-none" />
+              <div className="relative overflow-visible w-full">
                 <div
                   ref={carouselRef}
                   className="seamless-carousel-track"
@@ -231,7 +227,7 @@ export default function HomePage() {
                     return (
                       <div
                         key={`${giver.id}-${index}`}
-                        className="flex-shrink-0 w-[160px] sm:w-[180px] md:w-[200px] aspect-square rounded-[24px] overflow-hidden relative group bg-gradient-to-br from-primary/5 to-primary/10 border border-primary/20 md:backdrop-blur-none"
+                        className="flex-shrink-0 w-[160px] sm:w-[180px] md:w-[200px] aspect-square rounded-[24px] overflow-hidden relative group bg-gradient-to-br from-primary/5 to-primary/10 border border-primary/20 backdrop-blur-none"
                       >
                         {/* User Avatar */}
                         <div className="absolute inset-0 flex flex-col items-center justify-center p-4">
@@ -273,8 +269,6 @@ export default function HomePage() {
                           </div>
                         </div>
 
-                        {/* Decorative gradient overlay */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-primary/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                       </div>
                     );
                   })}

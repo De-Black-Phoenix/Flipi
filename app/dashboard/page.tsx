@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
-import { Gift, Heart, MessageSquare, Trophy, ArrowLeft } from "lucide-react";
+import { Gift, Heart, MessageSquare, Trophy } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useAuthGuard } from "@/hooks/use-auth-guard";
 import { useRouter } from "next/navigation";
@@ -13,7 +13,6 @@ import { DashboardSkeleton } from "@/components/skeletons/dashboard-skeleton";
 export default function DashboardPage() {
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [isScrolled, setIsScrolled] = useState(false);
   const [stats, setStats] = useState({
     listedItemsCount: 0,
     itemsGivenCount: 0,
@@ -139,37 +138,6 @@ export default function DashboardPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, authLoading]);
 
-  // Scroll detection for sticky title
-  useEffect(() => {
-    let scrollContainer: HTMLElement | null = null;
-    let timeoutId: NodeJS.Timeout;
-
-    const handleScroll = () => {
-      if (scrollContainer) {
-        setIsScrolled(scrollContainer.scrollTop > 100);
-      } else {
-        setIsScrolled(window.scrollY > 100);
-      }
-    };
-
-    timeoutId = setTimeout(() => {
-      scrollContainer = document.querySelector('main div.overflow-y-auto') as HTMLElement;
-      const target = scrollContainer || window;
-      
-      target.addEventListener("scroll", handleScroll, { passive: true });
-      handleScroll();
-    }, 100);
-
-    return () => {
-      clearTimeout(timeoutId);
-      if (scrollContainer) {
-        scrollContainer.removeEventListener("scroll", handleScroll);
-      } else {
-        window.removeEventListener("scroll", handleScroll);
-      }
-    };
-  }, []);
-
   // Render immediately with skeleton while loading
   if (loading || !profile) {
     return (
@@ -187,12 +155,12 @@ export default function DashboardPage() {
 
   return (
     <div className="h-full overflow-y-auto custom-scrollbar bg-background">
-      <div className="px-4 md:px-6 pt-4 md:pt-6 pb-20 md:pb-6 max-w-7xl mx-auto">
+      <div className="px-4 md:px-6 pt-3 md:pt-6 pb-20 md:pb-6 max-w-7xl mx-auto">
         {/* Header Section */}
         <div className="mb-4 md:mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
             <p className="text-xs text-muted-foreground mb-1 font-normal">{currentDate}</p>
-            <h1 className="text-xl md:text-3xl font-bold text-foreground leading-tight mb-1">
+            <h1 className="hidden md:block text-lg md:text-3xl font-bold text-foreground leading-tight mb-1">
               Good {new Date().getHours() < 12 ? "morning" : new Date().getHours() < 18 ? "afternoon" : "evening"}
               {profile.full_name && (
                 <span className="user-name">, {profile.full_name.split(" ")[0]}</span>

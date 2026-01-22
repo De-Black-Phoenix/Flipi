@@ -72,7 +72,15 @@ export function MobileTopBar() {
 
   const pageTitle = getPageTitle();
   const isHomePage = pathname === "/home" || pathname === "/dashboard";
-  const showBackButton = pathname?.startsWith("/items/");
+  const showBackButton =
+    pathname?.startsWith("/items/") ||
+    pathname?.startsWith("/my-items") ||
+    pathname === "/settings" ||
+    pathname === "/support" ||
+    pathname === "/profile" ||
+    pathname === "/saved" ||
+    pathname === "/dashboard" ||
+    pathname === "/admin";
 
   return (
     <div className="md:hidden fixed top-0 left-0 right-0 bg-background/95 backdrop-blur-sm border-b border-border z-30 safe-area-inset-top">

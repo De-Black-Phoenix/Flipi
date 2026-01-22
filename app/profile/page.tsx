@@ -19,7 +19,7 @@ import { SearchableSelect } from "@/components/ui/searchable-select";
 import { createClient } from "@/lib/supabase/client";
 import { useAuthGuard } from "@/hooks/use-auth-guard";
 import { useToast } from "@/hooks/use-toast";
-import { Trophy, MapPin, Calendar, Edit, Star, ArrowLeft, Save, ImageIcon } from "lucide-react";
+import { Trophy, MapPin, Calendar, Edit, Star, Save, ImageIcon } from "lucide-react";
 import { GiverReviews } from "@/components/giver-reviews";
 import { ProfileSkeleton } from "@/components/skeletons/profile-skeleton";
 
@@ -52,7 +52,6 @@ const REGION_TOWNS: Record<string, string[]> = {
 export default function ProfilePage() {
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [isScrolled, setIsScrolled] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -112,37 +111,6 @@ export default function ProfilePage() {
     maxFiles: 1,
     multiple: false,
   });
-
-  useEffect(() => {
-    let scrollContainer: HTMLElement | null = null;
-    let timeoutId: NodeJS.Timeout;
-
-    const handleScroll = () => {
-      if (scrollContainer) {
-        setIsScrolled(scrollContainer.scrollTop > 100);
-      } else {
-        setIsScrolled(window.scrollY > 100);
-      }
-    };
-
-    // Profile page uses AppShell, so find the scroll container
-    timeoutId = setTimeout(() => {
-      scrollContainer = document.querySelector('main div.overflow-y-auto') as HTMLElement;
-      const target = scrollContainer || window;
-      
-      target.addEventListener("scroll", handleScroll, { passive: true });
-      handleScroll();
-    }, 100);
-
-    return () => {
-      clearTimeout(timeoutId);
-      if (scrollContainer) {
-        scrollContainer.removeEventListener("scroll", handleScroll);
-      } else {
-        window.removeEventListener("scroll", handleScroll);
-      }
-    };
-  }, []);
 
   useEffect(() => {
     if (!user) return;
@@ -271,26 +239,7 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-4xl mx-auto px-4 md:px-6 pt-4 md:pt-8 pb-20 md:pb-12">
-        {/* Back Button - Fixed at top */}
-        <div className="sticky top-14 md:top-0 z-50 bg-background/95 backdrop-blur-sm py-3 md:py-4 -mx-4 md:-mx-6 px-4 md:px-6 border-b border-border/40 mb-6 md:mb-8">
-          <div className="flex items-center gap-4">
-            <Button
-              variant="ghost"
-              onClick={() => router.back()}
-              className="border-transparent hover:bg-transparent hover:border hover:border-primary/20 hover:text-foreground"
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back
-            </Button>
-            {isScrolled && profile && (
-              <h1 className="text-lg font-semibold text-foreground transition-opacity duration-200">
-                {profile.full_name || "Profile"}
-              </h1>
-            )}
-          </div>
-        </div>
-
+      <div className="max-w-4xl mx-auto px-4 md:px-6 pt-3 md:pt-8 pb-20 md:pb-12">
         {/* Header */}
         <div className="text-center mb-6 md:mb-8">
           <Avatar className="w-20 h-20 md:w-24 md:h-24 mx-auto mb-4 border-4 border-primary/20">

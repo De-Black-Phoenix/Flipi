@@ -73,12 +73,15 @@ export default function AdminPage() {
   }, [user, authLoading, supabase, router]);
 
   return (
-    <div className="min-h-screen px-4 py-8 max-w-6xl mx-auto animate-in fade-in duration-300">
-      <div className="mb-8">
+    <div className="min-h-screen bg-background">
+      <div className="max-w-6xl mx-auto px-4 md:px-6 pt-3 md:pt-8 pb-20 md:pb-12 animate-in fade-in duration-300">
+        <div className="mb-4 md:mb-8 hidden md:block">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-4xl font-bold mb-2">Admin Panel</h1>
-            <p className="text-gray-600">Manage users, NGOs, and platform content</p>
+              <h1 className="text-lg md:text-4xl font-bold mb-2">Admin Panel</h1>
+              <p className="text-sm md:text-base text-muted-foreground">
+                Manage users, NGOs, and platform content
+              </p>
           </div>
           <Button asChild>
             <Link href="/admin/settings">Platform Settings</Link>
@@ -86,7 +89,7 @@ export default function AdminPage() {
         </div>
       </div>
 
-      <Tabs defaultValue="ngos" className="space-y-6">
+        <Tabs defaultValue="ngos" className="space-y-6">
         <TabsList>
           <TabsTrigger value="ngos">NGOs</TabsTrigger>
           <TabsTrigger value="users">Users</TabsTrigger>
@@ -181,7 +184,8 @@ export default function AdminPage() {
             </div>
           )}
         </TabsContent>
-      </Tabs>
+        </Tabs>
+      </div>
     </div>
   );
 }

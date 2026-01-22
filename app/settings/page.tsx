@@ -20,13 +20,12 @@ import { createClient } from "@/lib/supabase/client";
 import { useAuthGuard } from "@/hooks/use-auth-guard";
 import { useToast } from "@/hooks/use-toast";
 import { ProfileSkeleton } from "@/components/skeletons/profile-skeleton";
-import { ArrowLeft, Mail, Lock, Trash2, Moon, Sun, Monitor, Eye, EyeOff } from "lucide-react";
+import { Mail, Lock, Trash2, Moon, Sun, Monitor, Eye, EyeOff } from "lucide-react";
 
 export default function SettingsPage() {
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
   
   // Privacy settings
   const [showRank, setShowRank] = useState(true);
@@ -63,36 +62,6 @@ export default function SettingsPage() {
 
   useEffect(() => {
     setMounted(true);
-  }, []);
-
-  useEffect(() => {
-    let scrollContainer: HTMLElement | null = null;
-    let timeoutId: NodeJS.Timeout;
-
-    const handleScroll = () => {
-      if (scrollContainer) {
-        setIsScrolled(scrollContainer.scrollTop > 100);
-      } else {
-        setIsScrolled(window.scrollY > 100);
-      }
-    };
-
-    timeoutId = setTimeout(() => {
-      scrollContainer = document.querySelector('main div.overflow-y-auto') as HTMLElement;
-      const target = scrollContainer || window;
-      
-      target.addEventListener("scroll", handleScroll, { passive: true });
-      handleScroll();
-    }, 100);
-
-    return () => {
-      clearTimeout(timeoutId);
-      if (scrollContainer) {
-        scrollContainer.removeEventListener("scroll", handleScroll);
-      } else {
-        window.removeEventListener("scroll", handleScroll);
-      }
-    };
   }, []);
 
   useEffect(() => {
@@ -352,30 +321,13 @@ export default function SettingsPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-2xl mx-auto px-4 md:px-6 pt-4 md:pt-8 pb-20 md:pb-12">
-        {/* Back Button - Fixed at top */}
-        <div className="sticky top-14 md:top-0 z-50 bg-background/95 backdrop-blur-sm py-3 md:py-4 -mx-4 md:-mx-6 px-4 md:px-6 border-b border-border/40 mb-6 md:mb-8">
-          <div className="flex items-center gap-4">
-            <Button
-              variant="ghost"
-              onClick={() => router.back()}
-              className="border-transparent hover:bg-transparent hover:border hover:border-primary/20 hover:text-foreground"
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back
-            </Button>
-            {isScrolled && (
-              <h1 className="text-lg font-semibold text-foreground transition-opacity duration-200">
-                Settings
-              </h1>
-            )}
-          </div>
-        </div>
-
+      <div className="max-w-2xl mx-auto px-4 md:px-6 pt-3 md:pt-8 pb-20 md:pb-12">
         {/* Header */}
-        <div className="mb-4 md:mb-8 mt-4">
-          <h1 className="text-xl md:text-3xl font-bold mb-2">Settings</h1>
-          <p className="text-muted-foreground">Manage your account settings and preferences</p>
+        <div className="mb-4 md:mb-8">
+          <h1 className="text-lg md:text-3xl font-bold mb-2">Settings</h1>
+          <p className="text-sm md:text-base text-muted-foreground">
+            Manage your account settings and preferences
+          </p>
         </div>
 
         {/* App Preferences */}
