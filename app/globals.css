@@ -166,7 +166,7 @@
 }
 
 .animate-sheet-bounce {
-  animation: sheet-bounce 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  animation: sheet-bounce 340ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .fade-in {

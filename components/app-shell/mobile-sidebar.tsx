@@ -406,7 +406,7 @@ export function MobileSidebar() {
             onClick={() => setShowMoreLinks(false)}
           />
           <div className="fixed bottom-0 left-0 right-0 z-[60] md:hidden">
-            <div className="bg-background border-t border-border rounded-t-[40px] px-4 pt-4 pb-6 shadow-lg animate-sheet-bounce">
+            <div className="bg-background border-t border-border rounded-t-[40px] rounded-b-none px-4 pt-4 pb-6 shadow-lg animate-sheet-bounce">
               <div className="space-y-1">
                 <Link href="/profile" onClick={() => setIsOpen(false)} className="block">
                   <Button
