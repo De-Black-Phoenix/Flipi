@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS public.profiles (
   show_items_given BOOLEAN DEFAULT true,
   request_notifications BOOLEAN DEFAULT true,
   message_notifications BOOLEAN DEFAULT true,
+  is_suspended BOOLEAN DEFAULT false,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc', NOW()),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc', NOW())
 );
@@ -137,6 +138,16 @@ CREATE POLICY "Users can update own profile"
   ON public.profiles FOR UPDATE
   USING (auth.uid() = id);
 
+CREATE POLICY "Platform admins can update profiles"
+  ON public.profiles FOR UPDATE
+  USING (
+    EXISTS (
+      SELECT 1 FROM public.profiles
+      WHERE profiles.id = auth.uid()
+      AND (profiles.role = 'platform_admin' OR profiles.user_type = 'platform_admin')
+    )
+  );
+
 CREATE POLICY "Users can insert own profile"
   ON public.profiles FOR INSERT
   WITH CHECK (auth.uid() = id);
@@ -198,6 +209,26 @@ CREATE POLICY "Users can create items"
 CREATE POLICY "Users can update own items"
   ON public.items FOR UPDATE
   USING (auth.uid() = owner_id);
+
+CREATE POLICY "Platform admins can update items"
+  ON public.items FOR UPDATE
+  USING (
+    EXISTS (
+      SELECT 1 FROM public.profiles
+      WHERE profiles.id = auth.uid()
+      AND (profiles.role = 'platform_admin' OR profiles.user_type = 'platform_admin')
+    )
+  );
+
+CREATE POLICY "Platform admins can update items"
+  ON public.items FOR UPDATE
+  USING (
+    EXISTS (
+      SELECT 1 FROM public.profiles
+      WHERE profiles.id = auth.uid()
+      AND (profiles.role = 'platform_admin' OR profiles.user_type = 'platform_admin')
+    )
+  );
 
 -- Requests policies
 CREATE POLICY "Users can view requests for their items or their own requests"
@@ -600,6 +631,69 @@ CREATE INDEX IF NOT EXISTS idx_saved_items_user_id ON public.saved_items(user_id
 CREATE INDEX IF NOT EXISTS idx_saved_items_item_id ON public.saved_items(item_id);
 CREATE INDEX IF NOT EXISTS idx_item_reports_item_id ON public.item_reports(item_id);
 CREATE INDEX IF NOT EXISTS idx_item_reports_reporter_id ON public.item_reports(reporter_id);
+
+-- Reports (items + users)
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'report_status') THEN
+    CREATE TYPE report_status AS ENUM ('pending', 'reviewed', 'actioned');
+  END IF;
+END $$;
+
+CREATE TABLE IF NOT EXISTS public.reports (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  reporter_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+  reported_item_id UUID REFERENCES public.items(id) ON DELETE SET NULL,
+  reported_user_id UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
+  reason TEXT NOT NULL,
+  details TEXT,
+  status report_status NOT NULL DEFAULT 'pending',
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc', NOW()),
+  CONSTRAINT reports_target_required CHECK (
+    reported_item_id IS NOT NULL OR reported_user_id IS NOT NULL
+  )
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS reports_unique_item_report
+  ON public.reports (reporter_id, reported_item_id)
+  WHERE reported_item_id IS NOT NULL;
+
+ALTER TABLE public.reports ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Reports insert own"
+  ON public.reports FOR INSERT
+  WITH CHECK (auth.uid() = reporter_id);
+
+CREATE POLICY "Reports select own"
+  ON public.reports FOR SELECT
+  USING (auth.uid() = reporter_id);
+
+CREATE POLICY "Reports select admin"
+  ON public.reports FOR SELECT
+  USING (
+    EXISTS (
+      SELECT 1 FROM public.profiles
+      WHERE profiles.id = auth.uid()
+      AND (profiles.role = 'platform_admin' OR profiles.user_type = 'platform_admin')
+    )
+  );
+
+CREATE POLICY "Reports update admin"
+  ON public.reports FOR UPDATE
+  USING (
+    EXISTS (
+      SELECT 1 FROM public.profiles
+      WHERE profiles.id = auth.uid()
+      AND (profiles.role = 'platform_admin' OR profiles.user_type = 'platform_admin')
+    )
+  )
+  WITH CHECK (
+    EXISTS (
+      SELECT 1 FROM public.profiles
+      WHERE profiles.id = auth.uid()
+      AND (profiles.role = 'platform_admin' OR profiles.user_type = 'platform_admin')
+    )
+  );
 CREATE INDEX IF NOT EXISTS idx_follows_follower_id ON public.follows(follower_id);
 CREATE INDEX IF NOT EXISTS idx_follows_following_id ON public.follows(following_id);
 

@@ -158,6 +158,13 @@ export default function MyRequestsPage() {
   };
 
   const [lastMessages, setLastMessages] = useState<Record<string, any>>({});
+  const handleConversationOpen = (conversationId: string) => {
+    setConversations((prev) =>
+      prev.map((conv) =>
+        conv.id === conversationId ? { ...conv, requester_unread_count: 0 } : conv
+      )
+    );
+  };
 
   useEffect(() => {
     if (conversations.length === 0) return;
@@ -166,7 +173,7 @@ export default function MyRequestsPage() {
       const messagePromises = conversations.map(async (conv: any) => {
         const { data } = await supabase
           .from("messages")
-          .select("content, created_at")
+          .select("content, created_at, sender_id")
           .eq("conversation_id", conv.id)
           .order("created_at", { ascending: false })
           .limit(1)
@@ -185,6 +192,39 @@ export default function MyRequestsPage() {
 
     loadLastMessages();
   }, [conversations, supabase]);
+
+  const isSystemMessage = (conversation: any, lastMessage?: any) => {
+    if (!lastMessage) return false;
+    const itemTitle = conversation?.items?.title;
+    if (itemTitle === "Flipi Moderation Notice") return true;
+    const content = String(lastMessage.content || "");
+    return content.startsWith("Warning from Flipi Moderation");
+  };
+
+  const groupConversationsByDate = (items: any[]) => {
+    const groups: Record<string, any[]> = {};
+    items.forEach((conv) => {
+      const lastMessage = lastMessages[conv.id];
+      const ts = lastMessage?.created_at || conv.last_message_at || conv.created_at;
+      const date = ts ? new Date(ts) : new Date();
+      const today = new Date();
+      const yesterday = new Date();
+      yesterday.setDate(today.getDate() - 1);
+      const isSameDay = (a: Date, b: Date) =>
+        a.getFullYear() === b.getFullYear() &&
+        a.getMonth() === b.getMonth() &&
+        a.getDate() === b.getDate();
+
+      let label = "Earlier";
+      if (isSameDay(date, today)) label = "Today";
+      else if (isSameDay(date, yesterday)) label = "Yesterday";
+      else label = date.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
+
+      if (!groups[label]) groups[label] = [];
+      groups[label].push(conv);
+    });
+    return groups;
+  };
 
   // Render immediately with skeleton while loading
   if (loading) {
@@ -252,62 +292,60 @@ export default function MyRequestsPage() {
             </CardContent>
           </Card>
         ) : (
-          <div className="space-y-3 md:space-y-4">
-            {conversations.map((conversation: any) => {
-              const item = conversation.items;
-              const owner = conversation.profiles;
-              const lastMessage = lastMessages[conversation.id];
+          <div className="space-y-5 md:space-y-6">
+            {Object.entries(groupConversationsByDate(conversations)).map(([groupLabel, groupItems]) => (
+              <div key={groupLabel} className="space-y-3 md:space-y-4">
+                <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                  {groupLabel}
+                </div>
+                {groupItems.map((conversation: any) => {
+                  const item = conversation.items;
+                  const owner = conversation.profiles;
+                  const isSystemChat = item?.title === "Flipi Moderation Notice";
+                  const cardTitle = isSystemChat ? "Flipi Team" : (item?.title || "Item");
+                  const ownerInitial = owner?.full_name?.charAt(0) || "U";
+                  const lastMessage = lastMessages[conversation.id];
 
-              const hasUnread = conversation.requester_unread_count > 0;
+                  const hasUnread = conversation.requester_unread_count > 0;
+                  const systemMessage = isSystemMessage(conversation, lastMessage);
 
-                return (
-                  <Card
-                    key={conversation.id}
-                    className={`hover:shadow-lg transition-shadow ${
-                      hasUnread
-                        ? "bg-blue-50/70 border-blue-300 border-2 shadow-md"
-                        : ""
-                    }`}
-                  >
-                    <CardContent className="p-4">
-                      <div className="flex gap-4">
-                        {/* Item Image */}
-                        <div className="relative w-20 h-20 rounded-lg overflow-hidden border bg-gray-100 flex-shrink-0">
-                          {item?.images && item.images.length > 0 ? (
+                  return (
+                    <Link
+                      key={conversation.id}
+                      href={`/chat/${conversation.id}`}
+                      onClick={() => handleConversationOpen(conversation.id)}
+                      className="block py-3 md:py-4 border-b border-border/60 hover:bg-muted/40 transition-colors"
+                    >
+                      <div className="flex gap-3">
+                        {/* Account Avatar */}
+                        <div className="relative w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden border bg-gray-100 flex-shrink-0">
+                          {owner?.avatar_url ? (
                             <Image
-                              src={item.images[0]}
-                              alt={item?.title || "Item"}
+                              src={owner.avatar_url}
+                              alt={owner?.full_name || "User"}
                               fill
                               className="object-cover"
-                              sizes="80px"
+                              sizes="48px"
                             />
                           ) : (
-                            <div className="w-full h-full flex items-center justify-center">
-                              <Gift className="w-8 h-8 text-gray-300" />
+                            <div className="w-full h-full flex items-center justify-center text-xs font-semibold text-muted-foreground">
+                              {ownerInitial}
                             </div>
                           )}
                         </div>
 
                         {/* Content */}
-                        <div className="flex-1 min-w-0">
-                          <CardHeader className="p-0 space-y-2 mb-4">
-                            <div className="flex items-start justify-between gap-3">
-                              <div className="min-w-0">
-                                <CardTitle className="line-clamp-1">
-                                  {item?.title || "Item"}
-                                </CardTitle>
-                                <CardDescription>
-                                  Owner: <span className="user-name">{owner?.full_name || "Community Member"}</span>
-                                </CardDescription>
+                        <div className="flex-1 min-w-0 space-y-1.5">
+                          <div className="flex items-start justify-between gap-3">
+                            <div className="min-w-0">
+                              <div className="font-semibold text-sm truncate">
+                                {cardTitle}
                               </div>
-                              {getStatusBadge(conversation.status, item?.status || "available")}
                             </div>
-                          </CardHeader>
+                          </div>
 
-                          {/* Last Message Preview */}
-                          <div className="flex items-center justify-between mb-4">
-                            <div className="flex items-center gap-2 text-sm flex-1 min-w-0 text-muted-foreground">
-                              <MessageSquare className={`w-4 h-4 flex-shrink-0 ${hasUnread ? "text-blue-600" : "text-muted-foreground"}`} />
+                          <div className="flex items-center justify-between gap-2">
+                            <div className="flex items-center gap-2 text-xs flex-1 min-w-0 text-muted-foreground">
                               <span className={`truncate ${hasUnread ? "font-semibold text-foreground" : ""}`}>
                                 {lastMessage ? (
                                   <>
@@ -318,29 +356,26 @@ export default function MyRequestsPage() {
                                   "No messages yet"
                                 )}
                               </span>
+                              {systemMessage && (
+                                <span className="ml-1 text-[9px] font-semibold uppercase px-1.5 py-0.5 rounded bg-muted text-muted-foreground">
+                                  System
+                                </span>
+                              )}
                             </div>
                             {hasUnread && (
-                              <span className="bg-blue-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center flex-shrink-0 ml-2">
+                              <span className="bg-blue-500 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center flex-shrink-0">
                                 {conversation.requester_unread_count > 9 ? "9+" : conversation.requester_unread_count}
                               </span>
                             )}
                           </div>
 
-                          {/* Actions */}
-                          <div className="flex items-center gap-2">
-                            <Button asChild variant="outline" className="w-auto">
-                              <Link href={`/chat/${conversation.id}`}>Open Chat</Link>
-                            </Button>
-                            <Button asChild variant="ghost" className="w-auto">
-                              <Link href={`/items/${item?.id}`}>View Item</Link>
-                            </Button>
-                          </div>
                         </div>
                       </div>
-                    </CardContent>
-                  </Card>
-                );
-            })}
+                    </Link>
+                  );
+                })}
+              </div>
+            ))}
           </div>
         )}
       </div>

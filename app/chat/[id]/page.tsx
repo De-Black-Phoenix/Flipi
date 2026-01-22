@@ -430,6 +430,8 @@ export default function ChatPage() {
   const isOwner = currentUser?.id === conversation.owner_id;
   const isRequester = currentUser?.id === conversation.requester_id;
   const otherParticipant = isOwner ? requester : owner;
+  const isSystemConversation = item?.title === "Flipi Moderation Notice";
+  const displayName = isSystemConversation ? "Flipi Team" : (otherParticipant?.full_name || "User");
   
   /**
    * Chat Lock/Unlock Rules:
@@ -464,7 +466,7 @@ export default function ChatPage() {
     (conversation.status === "accepted" && !isRequester && !isOwner) ||
     (item?.status === "given" && conversation.status !== "accepted");
   
-  const canSendMessages = !isConversationLocked;
+  const canSendMessages = !isConversationLocked && !(isSystemConversation && !isOwner);
 
   // Get last message for preview
   const lastMessage = messages.length > 0 ? messages[messages.length - 1] : null;
@@ -555,7 +557,7 @@ export default function ChatPage() {
                                 )}
                               </div>
                               <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">
-                                <span className="user-name">{otherParticipant?.full_name || "User"}</span>
+                                <span className="user-name">{displayName}</span>
                               </p>
                             </div>
                           </div>
@@ -576,22 +578,23 @@ export default function ChatPage() {
         <div className="flex-1 min-w-0 flex flex-col overflow-hidden h-full">
           <div className="max-w-4xl mx-auto w-full flex flex-col h-full">
             {/* Chat Header */}
-            <div className="flex-shrink-0 px-4 py-3 border-b border-border flex items-center gap-3">
+            <div className="hidden md:flex flex-shrink-0 px-4 py-3 border-b border-border items-center gap-3">
               <Button variant="ghost" size="sm" asChild className="lg:hidden">
-          <Link href={isOwner ? "/my-items" : "/my-requests"}>
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back
-          </Link>
-        </Button>
+                <Link href={isOwner ? "/my-items" : "/my-requests"}>
+                  <ArrowLeft className="w-4 h-4" />
+                </Link>
+              </Button>
               <Avatar className="w-10 h-10">
                 <AvatarImage src={otherParticipant?.avatar_url} />
                 <AvatarFallback>
-                  {otherParticipant?.full_name?.charAt(0) || "U"}
+                  {displayName.charAt(0)}
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1 min-w-0">
-                <h2 className="text-base text-foreground user-name">{otherParticipant?.full_name || "User"}</h2>
-                <p className="text-xs text-muted-foreground line-clamp-1">{item?.title || "Item"}</p>
+                <h2 className="text-base text-foreground user-name">{displayName}</h2>
+                {!isSystemConversation && (
+                  <p className="text-xs text-muted-foreground line-clamp-1">{item?.title || "Item"}</p>
+                )}
               </div>
               {conversation.status === "accepted" && (
                 <div className="flex items-center gap-1 px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">
@@ -617,8 +620,8 @@ export default function ChatPage() {
                   return (
                     <div key={message.id} className="flex justify-center my-2">
                       <div className="bg-blue-50 border border-blue-200 rounded-lg px-4 py-2 max-w-md">
-                            <p className="text-sm text-blue-800 text-center whitespace-pre-line">{message.content}</p>
-                        <p className="text-xs text-blue-600 text-center mt-1">
+                            <p className="text-[13px] text-blue-800 text-center whitespace-pre-line">{message.content}</p>
+                        <p className="text-[10px] text-blue-600 text-center mt-1">
                           {new Date(message.created_at).toLocaleTimeString([], {
                             hour: "2-digit",
                             minute: "2-digit",
@@ -631,21 +634,17 @@ export default function ChatPage() {
 
                 return (
                   <div key={message.id} className={`flex gap-3 ${isOwnMessage ? "flex-row-reverse" : ""}`}>
-                        {!isOwnMessage && (
-                          <Avatar className="w-8 h-8 flex-shrink-0">
-                      <AvatarImage src={message.profiles?.avatar_url} />
-                      <AvatarFallback>{message.profiles?.full_name?.charAt(0) || "U"}</AvatarFallback>
-                    </Avatar>
-                        )}
                         <div className={`flex flex-col ${isOwnMessage ? "items-end" : "items-start"} max-w-[70%]`}>
                       <div
                             className={`rounded-lg px-4 py-2 ${
-                              isOwnMessage ? "bg-blue-500 text-white" : "bg-card text-card-foreground border border-border"
+                              isOwnMessage
+                                ? "bg-blue-500 text-white"
+                                : "bg-primary/10 text-foreground border border-primary/10"
                         }`}
                       >
-                            <p className="text-sm whitespace-pre-wrap break-words leading-relaxed">{message.content}</p>
+                            <p className="text-[13px] whitespace-pre-wrap break-words leading-relaxed">{message.content}</p>
                       </div>
-                          <p className={`text-xs text-muted-foreground mt-1 ${isOwnMessage ? "text-right" : "text-left"}`}>
+                          <p className={`text-[10px] text-muted-foreground mt-1 ${isOwnMessage ? "text-right" : "text-left"}`}>
                         {new Date(message.created_at).toLocaleTimeString([], {
                           hour: "2-digit",
                           minute: "2-digit",
@@ -691,12 +690,14 @@ export default function ChatPage() {
               </Button>
             </div>
           ) : (
-              <div className="flex-shrink-0 text-center text-sm text-muted-foreground py-3 border-t border-border bg-background">
-              {conversation.status === "rejected" ? (
+            <div className="flex-shrink-0 text-center text-sm text-muted-foreground py-3 border-t border-border bg-background">
+              {isSystemConversation && !isOwner ? (
+                <p>Replies are disabled for moderation notices.</p>
+              ) : conversation.status === "rejected" ? (
                 <p>❌ This item has been given to someone else.<br />Best of luck next time.</p>
-                ) : conversation.status === "accepted" && !isRequester && !isOwner ? (
+              ) : conversation.status === "accepted" && !isRequester && !isOwner ? (
                 <p>❌ This item has been given to someone else.<br />Best of luck next time.</p>
-                ) : item?.status === "given" && conversation.status !== "accepted" ? (
+              ) : item?.status === "given" && conversation.status !== "accepted" ? (
                 <p>This conversation is now closed.</p>
               ) : (
                 <p>This conversation is closed.</p>

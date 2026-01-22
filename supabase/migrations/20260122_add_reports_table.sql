@@ -8,7 +8,7 @@ END $$;
 
 -- Reports table
 CREATE TABLE IF NOT EXISTS public.reports (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
   reporter_id uuid NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
   reported_item_id uuid REFERENCES public.items(id) ON DELETE SET NULL,
   reported_user_id uuid REFERENCES public.profiles(id) ON DELETE SET NULL,

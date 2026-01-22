@@ -14,6 +14,8 @@ export function MobileTopBar() {
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
   const [profile, setProfile] = useState<any>(null);
+  const [chatAvatarUrl, setChatAvatarUrl] = useState<string | null>(null);
+  const [chatAvatarInitial, setChatAvatarInitial] = useState("F");
   const supabase = createClient();
   const { setIsOpen } = useMobileSidebar();
 
@@ -40,6 +42,43 @@ export function MobileTopBar() {
     getUser();
   }, [supabase]);
 
+  useEffect(() => {
+    const loadChatAvatar = async () => {
+      if (!pathname?.startsWith("/chat") || !user) {
+        setChatAvatarUrl(null);
+        setChatAvatarInitial("F");
+        return;
+      }
+
+      const conversationId = pathname.split("/")[2];
+      if (!conversationId) return;
+
+      const { data: convData } = await supabase
+        .from("conversations")
+        .select("owner_id, requester_id")
+        .eq("id", conversationId)
+        .maybeSingle();
+
+      if (!convData) return;
+
+      const otherUserId = convData.owner_id === user.id ? convData.requester_id : convData.owner_id;
+      if (!otherUserId) return;
+
+      const { data: otherProfile } = await supabase
+        .from("profiles")
+        .select("full_name, avatar_url")
+        .eq("id", otherUserId)
+        .maybeSingle();
+
+      if (otherProfile) {
+        setChatAvatarUrl(otherProfile.avatar_url ?? null);
+        setChatAvatarInitial(otherProfile.full_name?.charAt(0) || "F");
+      }
+    };
+
+    loadChatAvatar();
+  }, [pathname, supabase, user]);
+
   // Hide on auth pages
   if (
     pathname === "/" ||
@@ -62,7 +101,8 @@ export function MobileTopBar() {
     if (pathname === "/find") return "Explore";
     if (pathname === "/give") return "Give Item";
     if (pathname?.startsWith("/campaigns")) return "Campaigns";
-    if (pathname?.startsWith("/my-requests") || pathname?.startsWith("/chat")) return "My Requests";
+    if (pathname?.startsWith("/my-requests")) return "My Requests";
+    if (pathname?.startsWith("/chat")) return "Flipi Team";
     if (pathname?.startsWith("/my-items")) return "My Items";
     if (pathname === "/saved") return "Saved";
     if (pathname === "/profile") return "Profile";
@@ -76,8 +116,10 @@ export function MobileTopBar() {
   const pageTitle = getPageTitle();
   const isHomePage = pathname === "/home";
   const isDashboard = pathname === "/dashboard";
+  const isChatPage = pathname?.startsWith("/chat");
   const showBackButton =
     pathname?.startsWith("/items/") ||
+    pathname?.startsWith("/chat") ||
     pathname?.startsWith("/my-items") ||
     pathname === "/settings" ||
     pathname === "/support" ||
@@ -118,6 +160,16 @@ export function MobileTopBar() {
             <Link href="/home" className="text-[17px] font-bold text-primary font-brand">
               🐬 Flipi
             </Link>
+          ) : isChatPage ? (
+            <div className="flex items-center gap-2 min-w-0">
+              <Avatar className="w-6 h-6">
+                <AvatarImage src={chatAvatarUrl ?? undefined} />
+                <AvatarFallback className="bg-primary/10 text-primary text-xs">
+                  {chatAvatarInitial}
+                </AvatarFallback>
+              </Avatar>
+              <h1 className="text-[17px] font-bold text-foreground truncate">{pageTitle}</h1>
+            </div>
           ) : (
             <h1 className="text-[17px] font-bold text-foreground truncate">{pageTitle}</h1>
           )}

@@ -17,6 +17,7 @@ export default function AdminPage() {
   const [ngos, setNgos] = useState<any[]>([]);
   const [reports, setReports] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [primaryTab, setPrimaryTab] = useState<"reports" | "users">("reports");
   const [secondaryTab, setSecondaryTab] = useState<"users" | "ngos">("users");
   const [reportStatusFilter, setReportStatusFilter] = useState<"pending" | "reviewed" | "actioned">("pending");
@@ -72,8 +73,8 @@ export default function AdminPage() {
             status,
             created_at,
             reporter:reporter_id (id, full_name, email),
-            reported_user:reported_user_id (id, full_name, email),
-            reported_item:reported_item_id (id, title)
+            reported_user:reported_user_id (id, full_name, email, is_suspended),
+            reported_item:reported_item_id (id, title, status, owner_id, owner:profiles!items_owner_id_fkey (id, full_name, email, is_suspended))
           `
           )
           .order("created_at", { ascending: false })
@@ -85,6 +86,7 @@ export default function AdminPage() {
         router.replace("/");
         return;
       }
+      setIsAdmin(true);
 
       if (usersResult.data) {
         setUsers(usersResult.data);
@@ -113,6 +115,42 @@ export default function AdminPage() {
     loadData();
   }, [user, authLoading, supabase, router]);
 
+  useEffect(() => {
+    if (!isAdmin) return;
+
+    const channel = supabase
+      .channel("admin-reports")
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "reports" },
+        async (payload) => {
+          const fullReport = await fetchReportById(payload.new.id);
+          if (!fullReport) return;
+          setReports((prev) => {
+            if (prev.some((report) => report.id === fullReport.id)) {
+              return prev;
+            }
+            return [fullReport, ...prev];
+          });
+          toast({ title: "New report submitted" });
+        }
+      )
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "reports" },
+        async (payload) => {
+          const fullReport = await fetchReportById(payload.new.id);
+          if (!fullReport) return;
+          setReports((prev) => prev.map((report) => (report.id === fullReport.id ? fullReport : report)));
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [isAdmin, supabase, toast]);
+
   const filteredReports = reports.filter((report) => report.status === reportStatusFilter);
 
   const formatReportTarget = (report: any) => {
@@ -137,9 +175,216 @@ export default function AdminPage() {
     return date.toLocaleString();
   };
 
-  const handleReportAction = async (reportId: string, action: "hide" | "warn" | "suspend" | "ignore") => {
+  const getTargetUser = (report: any) => {
+    if (report.reported_user) return report.reported_user;
+    if (report.reported_item?.owner) return report.reported_item.owner;
+    return null;
+  };
+
+  const getTargetUserId = (report: any) =>
+    report.reported_user_id ?? report.reported_item?.owner_id ?? null;
+
+  const ensureAdminNoticeItem = async (adminId: string) => {
+    const { data: existing } = await supabase
+      .from("items")
+      .select("id")
+      .eq("owner_id", adminId)
+      .eq("title", "Flipi Moderation Notice")
+      .maybeSingle();
+
+    if (existing?.id) return existing.id;
+
+    const { data, error } = await supabase
+      .from("items")
+      .insert({
+        owner_id: adminId,
+        title: "Flipi Moderation Notice",
+        description: "System messages from Flipi moderation.",
+        category: "Other",
+        condition: "good",
+        images: [],
+        region: "Greater Accra",
+        town: "System",
+        status: "reserved",
+      })
+      .select("id")
+      .single();
+
+    if (error) return null;
+    return data?.id ?? null;
+  };
+
+  const ensureWarningConversation = async (adminId: string, userId: string) => {
+    const systemItemId = await ensureAdminNoticeItem(adminId);
+    if (!systemItemId) return null;
+
+    const { data: existing } = await supabase
+      .from("conversations")
+      .select("id")
+      .eq("item_id", systemItemId)
+      .eq("requester_id", userId)
+      .maybeSingle();
+
+    if (existing?.id) return existing.id;
+
+    const { data, error } = await supabase
+      .from("conversations")
+      .insert({
+        item_id: systemItemId,
+        requester_id: userId,
+        owner_id: adminId,
+      })
+      .select("id")
+      .single();
+
+    if (error) return null;
+    return data?.id ?? null;
+  };
+
+  const sendWarningMessage = async (report: any) => {
+    if (!user?.id) return false;
+    const targetUserId = getTargetUserId(report);
+    if (!targetUserId) return false;
+
+    const conversationId = await ensureWarningConversation(user.id, targetUserId);
+    if (!conversationId) return false;
+
+    const lines = [
+      "Warning from Flipi Moderation",
+      `Reason: ${report.reason}`,
+      report.details ? `Details: ${report.details}` : null,
+      "Please review Flipi community guidelines.",
+    ].filter(Boolean);
+
+    const { error } = await supabase.from("messages").insert({
+      conversation_id: conversationId,
+      sender_id: user.id,
+      content: lines.join("\n"),
+    });
+
+    return !error;
+  };
+
+  const fetchReportById = async (reportId: string) => {
+    const { data } = await supabase
+      .from("reports")
+      .select(
+        `
+        id,
+        reporter_id,
+        reported_item_id,
+        reported_user_id,
+        reason,
+        details,
+        status,
+        created_at,
+        reporter:reporter_id (id, full_name, email),
+        reported_user:reported_user_id (id, full_name, email, is_suspended),
+        reported_item:reported_item_id (id, title, status, owner_id, owner:profiles!items_owner_id_fkey (id, full_name, email, is_suspended))
+      `
+      )
+      .eq("id", reportId)
+      .single();
+
+    return data;
+  };
+
+  const handleReportAction = async (
+    reportId: string,
+    action: "hide" | "warn" | "suspend" | "ignore"
+  ) => {
+    const report = reports.find((item) => item.id === reportId);
     const nextStatus = action === "ignore" ? "reviewed" : "actioned";
+
     setActionLoadingId(reportId);
+
+    if (action === "hide") {
+      if (!report?.reported_item_id) {
+        toast({ title: "Action failed", description: "No item linked to this report." });
+        setActionLoadingId(null);
+        return;
+      }
+
+      const currentStatus = report.reported_item?.status;
+      if (currentStatus === "given") {
+        toast({ title: "Action not available", description: "Given items cannot be hidden." });
+        setActionLoadingId(null);
+        return;
+      }
+
+      const nextItemStatus = currentStatus === "reserved" ? "available" : "reserved";
+      const { error: itemError } = await supabase
+        .from("items")
+        .update({ status: nextItemStatus })
+        .eq("id", report.reported_item_id);
+
+      if (itemError) {
+        toast({ title: "Action failed", description: "Could not update item status." });
+        setActionLoadingId(null);
+        return;
+      }
+
+      setReports((prev) =>
+        prev.map((item) =>
+          item.id === reportId
+            ? { ...item, reported_item: { ...item.reported_item, status: nextItemStatus } }
+            : item
+        )
+      );
+    }
+
+    if (action === "warn") {
+      const warned = await sendWarningMessage(report);
+      if (!warned) {
+        toast({ title: "Action failed", description: "Could not send warning message." });
+        setActionLoadingId(null);
+        return;
+      }
+    }
+
+    if (action === "suspend") {
+      const targetUser = getTargetUser(report);
+      const targetUserId = getTargetUserId(report);
+      if (!targetUserId) {
+        toast({ title: "Action failed", description: "No user linked to this report." });
+        setActionLoadingId(null);
+        return;
+      }
+
+      const nextSuspended = !(targetUser?.is_suspended ?? false);
+      const { error: suspendError } = await supabase
+        .from("profiles")
+        .update({ is_suspended: nextSuspended })
+        .eq("id", targetUserId);
+
+      if (suspendError) {
+        toast({ title: "Action failed", description: "Could not update user status." });
+        setActionLoadingId(null);
+        return;
+      }
+
+      setReports((prev) =>
+        prev.map((item) =>
+          item.id === reportId
+            ? {
+                ...item,
+                reported_user: item.reported_user
+                  ? { ...item.reported_user, is_suspended: nextSuspended }
+                  : item.reported_user,
+                reported_item: item.reported_item
+                  ? {
+                      ...item.reported_item,
+                      owner: item.reported_item.owner
+                        ? { ...item.reported_item.owner, is_suspended: nextSuspended }
+                        : item.reported_item.owner,
+                    }
+                  : item.reported_item,
+              }
+            : item
+        )
+      );
+    }
+
     const { error } = await supabase
       .from("reports")
       .update({ status: nextStatus })
@@ -152,7 +397,7 @@ export default function AdminPage() {
     }
 
     setReports((prev) =>
-      prev.map((report) => (report.id === reportId ? { ...report, status: nextStatus } : report))
+      prev.map((item) => (item.id === reportId ? { ...item, status: nextStatus } : item))
     );
     setOpenReportId(null);
     setActionLoadingId(null);
@@ -225,88 +470,96 @@ export default function AdminPage() {
               </Card>
             ) : (
               <div className="space-y-4">
-                {filteredReports.map((report: any) => (
-                  <Card key={report.id}>
-                    <CardHeader>
-                      <div className="flex items-start justify-between gap-6">
-                        <div className="space-y-1">
-                          <CardTitle className="text-base">{report.reason}</CardTitle>
-                          <CardDescription>{formatReportTarget(report)}</CardDescription>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span className="px-3 py-1 rounded-full text-xs bg-muted text-muted-foreground">
-                            {report.status}
-                          </span>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() =>
-                              setOpenReportId((current) => (current === report.id ? null : report.id))
-                            }
-                          >
-                            {openReportId === report.id ? "Hide details" : "View details"}
-                          </Button>
-                        </div>
-                      </div>
-                    </CardHeader>
-                    {openReportId === report.id && (
-                      <CardContent className="space-y-4">
-                        <div className="grid gap-3 text-sm text-muted-foreground">
-                          <div>
-                            <span className="font-medium text-foreground">Reported by: </span>
-                            {report.reporter?.full_name || report.reporter?.email || report.reporter_id}
+                {filteredReports.map((report: any) => {
+                  const targetUser = getTargetUser(report);
+                  const isHidden = report.reported_item?.status === "reserved";
+                  const hasItem = Boolean(report.reported_item_id);
+                  const hasTargetUser = Boolean(getTargetUserId(report));
+                  const suspendLabel = targetUser?.is_suspended ? "Unsuspend" : "Suspend";
+
+                  return (
+                    <Card key={report.id}>
+                      <CardHeader>
+                        <div className="flex items-start justify-between gap-6">
+                          <div className="space-y-1">
+                            <CardTitle className="text-base">{report.reason}</CardTitle>
+                            <CardDescription>{formatReportTarget(report)}</CardDescription>
                           </div>
-                          <div>
-                            <span className="font-medium text-foreground">Target: </span>
-                            {formatReportTarget(report)}
-                          </div>
-                          <div>
-                            <span className="font-medium text-foreground">Details: </span>
-                            {report.details || "No additional details provided."}
-                          </div>
-                          <div>
-                            <span className="font-medium text-foreground">Reported: </span>
-                            {formatTimestamp(report.created_at)}
+                          <div className="flex items-center gap-2">
+                            <span className="px-3 py-1 rounded-full text-xs bg-muted text-muted-foreground">
+                              {report.status}
+                            </span>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() =>
+                                setOpenReportId((current) => (current === report.id ? null : report.id))
+                              }
+                            >
+                              {openReportId === report.id ? "Hide details" : "View details"}
+                            </Button>
                           </div>
                         </div>
-                        <div className="flex flex-wrap gap-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleReportAction(report.id, "hide")}
-                            disabled={actionLoadingId === report.id}
-                          >
-                            Hide item
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleReportAction(report.id, "warn")}
-                            disabled={actionLoadingId === report.id}
-                          >
-                            Warn user
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleReportAction(report.id, "suspend")}
-                            disabled={actionLoadingId === report.id}
-                          >
-                            Suspend
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleReportAction(report.id, "ignore")}
-                            disabled={actionLoadingId === report.id}
-                          >
-                            Ignore
-                          </Button>
-                        </div>
-                      </CardContent>
-                    )}
-                  </Card>
-                ))}
+                      </CardHeader>
+                      {openReportId === report.id && (
+                        <CardContent className="space-y-4">
+                          <div className="grid gap-3 text-sm text-muted-foreground">
+                            <div>
+                              <span className="font-medium text-foreground">Reported by: </span>
+                              {report.reporter?.full_name || report.reporter?.email || report.reporter_id}
+                            </div>
+                            <div>
+                              <span className="font-medium text-foreground">Target: </span>
+                              {formatReportTarget(report)}
+                            </div>
+                            <div>
+                              <span className="font-medium text-foreground">Details: </span>
+                              {report.details || "No additional details provided."}
+                            </div>
+                            <div>
+                              <span className="font-medium text-foreground">Reported: </span>
+                              {formatTimestamp(report.created_at)}
+                            </div>
+                          </div>
+                          <div className="flex flex-wrap gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleReportAction(report.id, "hide")}
+                              disabled={actionLoadingId === report.id || !hasItem}
+                            >
+                              {isHidden ? "Unhide item" : "Hide item"}
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleReportAction(report.id, "warn")}
+                              disabled={actionLoadingId === report.id || !hasTargetUser}
+                            >
+                              Warn user
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleReportAction(report.id, "suspend")}
+                              disabled={actionLoadingId === report.id || !hasTargetUser}
+                            >
+                              {suspendLabel}
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleReportAction(report.id, "ignore")}
+                              disabled={actionLoadingId === report.id}
+                            >
+                              Ignore
+                            </Button>
+                          </div>
+                        </CardContent>
+                      )}
+                    </Card>
+                  );
+                })}
               </div>
             )}
           </TabsContent>

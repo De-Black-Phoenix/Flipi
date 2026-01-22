@@ -238,21 +238,28 @@ export default function UserProfilePage() {
 
     setReportSubmitting(true);
     try {
-      await fetch("/api/report", {
+      const response = await fetch("/api/report", {
         method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           reportedUserId: userId,
           reason: reportReason,
           details: reportReason === "Other" ? reportDetails.trim() : null,
         }),
       });
-    } catch {
-      // Intentionally silent for a calm reporting experience.
-    } finally {
+
+      if (!response.ok) {
+        toast({ title: "Report failed", description: "Please try again." });
+        return;
+      }
+
       toast({ title: "Thanks for helping keep Flipi safe." });
       setReportModalOpen(false);
       setReportReason("");
       setReportDetails("");
+    } catch {
+      toast({ title: "Report failed", description: "Please try again." });
+    } finally {
       setReportSubmitting(false);
     }
   };

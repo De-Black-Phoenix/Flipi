@@ -29,7 +29,22 @@ export function useAuthGuard({ requireAuth = true, redirectTo }: UseAuthGuardOpt
             if (requireAuth) {
               router.replace(redirectTo || "/login");
             }
-          } else if (!requireAuth) {
+            return;
+          }
+
+          const { data: profile } = await supabase
+            .from("profiles")
+            .select("is_suspended")
+            .eq("id", currentUser.id)
+            .maybeSingle();
+
+          if (profile?.is_suspended) {
+            await supabase.auth.signOut();
+            router.replace("/suspended");
+            return;
+          }
+
+          if (!requireAuth) {
             router.replace(redirectTo || "/find");
           }
         }
