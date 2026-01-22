@@ -34,10 +34,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <main className="flex-1 flex flex-col overflow-hidden min-w-0 bg-background">
             {/* Mobile Top Bar */}
             <MobileTopBar />
-            <div className="flex-1 overflow-y-auto custom-scrollbar pt-14 md:pt-0 bg-background min-h-0">
+            <div className="flex-1 overflow-y-auto custom-scrollbar pt-14 md:pt-0 bg-background min-h-0 pb-[calc(3.5rem+env(safe-area-inset-bottom))] md:pb-0">
               {children}
             </div>
-            {/* Bottom Navigation - Mobile Only (in flow) */}
+            {/* Bottom Navigation - Mobile Only */}
             <BottomNav />
           </main>
         </div>

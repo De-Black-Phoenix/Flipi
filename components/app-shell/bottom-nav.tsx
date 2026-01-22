@@ -91,8 +91,11 @@ export function BottomNav() {
   }
 
   return (
-    <nav className="md:hidden w-full bg-background border-t border-border safe-area-inset-bottom">
-      <div className="flex items-center justify-around h-14 px-2 pb-safe">
+    <nav
+      className="md:hidden fixed left-0 right-0 z-40 w-full bg-background border-t border-border"
+      style={{ bottom: "env(safe-area-inset-bottom)", paddingBottom: "env(safe-area-inset-bottom)" }}
+    >
+      <div className="flex items-center justify-around h-14 px-2">
         {navItems.map((item) => {
           if (item.auth && !user) return null;
           const Icon = item.icon;
