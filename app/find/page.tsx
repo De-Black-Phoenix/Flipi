@@ -246,7 +246,7 @@ export default function FindItemsPage() {
             <button
               type="button"
               onClick={() => setFiltersOpen(true)}
-              className="text-muted-foreground hover:text-foreground"
+              className="text-muted-foreground hover:text-foreground md:hidden"
               aria-label="Open filters"
             >
               <SlidersHorizontal className="w-4 h-4" />
@@ -371,7 +371,7 @@ export default function FindItemsPage() {
       )}
       </div>
       <Dialog open={filtersOpen} onOpenChange={setFiltersOpen}>
-        <DialogContent className="sm:max-w-md rounded-t-[32px]">
+        <DialogContent className="sm:max-w-md rounded-t-[40px] rounded-b-none sm:rounded-[24px]">
           <DialogHeader>
             <DialogTitle>Filters</DialogTitle>
             <DialogDescription>Refine items by location.</DialogDescription>

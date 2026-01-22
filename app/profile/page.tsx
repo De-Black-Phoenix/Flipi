@@ -363,7 +363,7 @@ export default function ProfilePage() {
 
       {/* Edit Profile Modal */}
       <Dialog open={editModalOpen} onOpenChange={setEditModalOpen}>
-        <DialogContent className="sm:max-w-lg rounded-[24px] max-h-[90vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-lg rounded-t-[40px] rounded-b-none sm:rounded-[24px] max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Edit Profile</DialogTitle>
             <DialogDescription>

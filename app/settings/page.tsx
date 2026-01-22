@@ -508,7 +508,7 @@ export default function SettingsPage() {
 
       {/* Change Email Dialog */}
       <Dialog open={changeEmailOpen} onOpenChange={setChangeEmailOpen}>
-        <DialogContent className="rounded-[24px]">
+        <DialogContent className="rounded-t-[40px] rounded-b-none sm:rounded-[24px]">
           <DialogHeader>
             <DialogTitle>Change Email</DialogTitle>
             <DialogDescription>
@@ -556,7 +556,7 @@ export default function SettingsPage() {
           setCurrentPasswordVerified(false);
         }
       }}>
-        <DialogContent className="rounded-[24px]">
+        <DialogContent className="rounded-t-[40px] rounded-b-none sm:rounded-[24px]">
           <DialogHeader>
             <DialogTitle>Change Password</DialogTitle>
             <DialogDescription>
@@ -693,7 +693,7 @@ export default function SettingsPage() {
 
       {/* Delete Account Dialog */}
       <Dialog open={deleteAccountOpen} onOpenChange={setDeleteAccountOpen}>
-        <DialogContent className="rounded-[24px]">
+        <DialogContent className="rounded-t-[40px] rounded-b-none sm:rounded-[24px]">
           <DialogHeader>
             <DialogTitle>Delete Account</DialogTitle>
             <DialogDescription>

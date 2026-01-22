@@ -150,7 +150,7 @@ export default function HomePage() {
     <>
       {/* Welcome Modal */}
       <Dialog open={showWelcomeModal} onOpenChange={setShowWelcomeModal}>
-        <DialogContent className="sm:max-w-md rounded-[24px]">
+        <DialogContent className="sm:max-w-md rounded-t-[40px] rounded-b-none sm:rounded-[24px]">
           <DialogHeader>
             <div className="flex items-center justify-center mb-4">
               <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">

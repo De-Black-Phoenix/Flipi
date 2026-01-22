@@ -38,6 +38,18 @@ import { useToast } from "@/hooks/use-toast";
 
 /* ---------- types ---------- */
 
+const REPORT_REASONS = [
+  "Fake or misleading item",
+  "Stolen item",
+  "Scam or fraud attempt",
+  "Inappropriate content",
+  "Hate or harassment",
+  "Dangerous or illegal item",
+  "Duplicate or spam listing",
+  "Impersonation",
+  "Other",
+];
+
 interface GivingStoryCardProps {
   item: {
     id: string;
@@ -94,6 +106,7 @@ export function GivingStoryCard({ item, currentUserId }: GivingStoryCardProps) {
   const [reportModalOpen, setReportModalOpen] = useState(false);
   const [reportReason, setReportReason] = useState("");
   const [reportDetails, setReportDetails] = useState("");
+  const [reportSubmitting, setReportSubmitting] = useState(false);
 
   const [showAppreciationAnimation, setShowAppreciationAnimation] = useState(false);
 
@@ -253,19 +266,27 @@ export function GivingStoryCard({ item, currentUserId }: GivingStoryCardProps) {
 
   const handleReport = async () => {
     if (!user || !reportReason) return;
+    if (reportReason === "Other" && !reportDetails.trim()) return;
 
-    await fetch("/api/item/report", {
-      method: "POST",
-      body: JSON.stringify({
-        itemId: item.id,
-        reason: reportReason,
-        details: reportDetails || null,
-      }),
-    });
-
-    setReportModalOpen(false);
-    setReportReason("");
-    setReportDetails("");
+    setReportSubmitting(true);
+    try {
+      await fetch("/api/report", {
+        method: "POST",
+        body: JSON.stringify({
+          reportedItemId: item.id,
+          reason: reportReason,
+          details: reportReason === "Other" ? reportDetails.trim() : null,
+        }),
+      });
+    } catch {
+      // Intentionally silent for a calm reporting experience.
+    } finally {
+      toast({ title: "Thanks for helping keep Flipi safe." });
+      setReportModalOpen(false);
+      setReportReason("");
+      setReportDetails("");
+      setReportSubmitting(false);
+    }
   };
 
   /* ---------- render ---------- */
@@ -422,7 +443,7 @@ export function GivingStoryCard({ item, currentUserId }: GivingStoryCardProps) {
             <div className="space-y-2">
               <Label>Reason</Label>
               <RadioGroup value={reportReason} onValueChange={setReportReason} className="grid gap-2">
-                {["Spam", "Inappropriate", "Scam", "Other"].map((r) => (
+                {REPORT_REASONS.map((r) => (
                   <div key={r} className="flex items-center space-x-2">
                     <RadioGroupItem value={r} id={`reason-${item.id}-${r}`} />
                     <Label htmlFor={`reason-${item.id}-${r}`}>{r}</Label>
@@ -431,28 +452,27 @@ export function GivingStoryCard({ item, currentUserId }: GivingStoryCardProps) {
               </RadioGroup>
             </div>
 
-            <div className="space-y-2">
-              <Label>Details (optional)</Label>
-              <Textarea
-                value={reportDetails}
-                onChange={(e) => setReportDetails(e.target.value)}
-                placeholder="Add details…"
-                maxLength={1000}
-              />
-            </div>
+            {reportReason === "Other" && (
+              <div className="space-y-2">
+                <Label>Details</Label>
+                <Textarea
+                  value={reportDetails}
+                  onChange={(e) => setReportDetails(e.target.value)}
+                  placeholder="Add details…"
+                  maxLength={1000}
+                />
+              </div>
+            )}
 
             <div className="flex justify-end gap-2">
               <Button variant="outline" onClick={() => setReportModalOpen(false)}>
                 Cancel
               </Button>
               <Button
-                onClick={async () => {
-                  await handleReport();
-                  toast({ title: "Report submitted" });
-                }}
-                disabled={!reportReason}
+                onClick={handleReport}
+                disabled={!reportReason || reportSubmitting || (reportReason === "Other" && !reportDetails.trim())}
               >
-                Submit
+                {reportSubmitting ? "Submitting..." : "Submit"}
               </Button>
             </div>
           </div>

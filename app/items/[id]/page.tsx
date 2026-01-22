@@ -115,7 +115,7 @@ export default function ItemDetailPage() {
               <h2 className="text-xl font-semibold mb-2">Item not found</h2>
               <p className="text-gray-500 mb-4">This item may have been removed or doesn&apos;t exist.</p>
               <Button asChild>
-                <Link href="/find">Back to Find Items</Link>
+                <Link href="/find">Back to Explore</Link>
               </Button>
             </CardContent>
           </Card>

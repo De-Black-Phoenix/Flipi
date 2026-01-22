@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { ArrowLeft, UserPlus, UserMinus, Gift, MapPin } from "lucide-react";
+import { ArrowLeft, UserPlus, UserMinus, Gift, MapPin, Flag } from "lucide-react";
 
 
 // Rank tier emoji helper
@@ -20,12 +20,34 @@ const getRankEmoji = (rank?: string) => {
   };
   return rankMap[rank || "Seed"] || rankMap["Seed"];
 };
+
+const REPORT_REASONS = [
+  "Fake or misleading item",
+  "Stolen item",
+  "Scam or fraud attempt",
+  "Inappropriate content",
+  "Hate or harassment",
+  "Dangerous or illegal item",
+  "Duplicate or spam listing",
+  "Impersonation",
+  "Other",
+];
 import { createClient } from "@/lib/supabase/client";
 import { useAuthGuard } from "@/hooks/use-auth-guard";
 import { useToast } from "@/hooks/use-toast";
 import { GivingStoryCard } from "@/components/giving-story-card";
 import { ProfileSkeleton } from "@/components/skeletons/profile-skeleton";
 import Image from "next/image";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 export default function UserProfilePage() {
   const params = useParams();
@@ -38,6 +60,10 @@ export default function UserProfilePage() {
   const [followersCount, setFollowersCount] = useState(0);
   const [followingCount, setFollowingCount] = useState(0);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [reportModalOpen, setReportModalOpen] = useState(false);
+  const [reportReason, setReportReason] = useState("");
+  const [reportDetails, setReportDetails] = useState("");
+  const [reportSubmitting, setReportSubmitting] = useState(false);
   const supabase = createClient();
   const { toast } = useToast();
   const { user } = useAuthGuard({ requireAuth: false });
@@ -206,6 +232,31 @@ export default function UserProfilePage() {
     }
   };
 
+  const handleReportUser = async () => {
+    if (!user || !reportReason) return;
+    if (reportReason === "Other" && !reportDetails.trim()) return;
+
+    setReportSubmitting(true);
+    try {
+      await fetch("/api/report", {
+        method: "POST",
+        body: JSON.stringify({
+          reportedUserId: userId,
+          reason: reportReason,
+          details: reportReason === "Other" ? reportDetails.trim() : null,
+        }),
+      });
+    } catch {
+      // Intentionally silent for a calm reporting experience.
+    } finally {
+      toast({ title: "Thanks for helping keep Flipi safe." });
+      setReportModalOpen(false);
+      setReportReason("");
+      setReportDetails("");
+      setReportSubmitting(false);
+    }
+  };
+
   // Render immediately with skeleton while loading
   if (loading) {
     return (
@@ -296,23 +347,29 @@ export default function UserProfilePage() {
                 </div>
               </div>
               {!isOwnProfile && (
-                <Button
-                  variant={isFollowing ? "outline" : "default"}
-                  onClick={handleFollow}
-                  className="w-auto"
-                >
-                  {isFollowing ? (
-                    <>
-                      <UserMinus className="w-4 h-4 mr-2" />
-                      Following
-                    </>
-                  ) : (
-                    <>
-                      <UserPlus className="w-4 h-4 mr-2" />
-                      Follow
-                    </>
-                  )}
-                </Button>
+                <div className="flex flex-wrap gap-2">
+                  <Button
+                    variant={isFollowing ? "outline" : "default"}
+                    onClick={handleFollow}
+                    className="w-auto"
+                  >
+                    {isFollowing ? (
+                      <>
+                        <UserMinus className="w-4 h-4 mr-2" />
+                        Following
+                      </>
+                    ) : (
+                      <>
+                        <UserPlus className="w-4 h-4 mr-2" />
+                        Follow
+                      </>
+                    )}
+                  </Button>
+                  <Button variant="outline" onClick={() => setReportModalOpen(true)} className="w-auto">
+                    <Flag className="w-4 h-4 mr-2" />
+                    Report
+                  </Button>
+                </div>
               )}
             </div>
           </div>
@@ -349,6 +406,53 @@ export default function UserProfilePage() {
           )}
         </div>
       </div>
+      <Dialog open={reportModalOpen} onOpenChange={setReportModalOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Report user</DialogTitle>
+            <DialogDescription>
+              Help us keep Flipi safe. Choose a reason and add details if needed.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3">
+            <div className="space-y-2">
+              <Label>Reason</Label>
+              <RadioGroup value={reportReason} onValueChange={setReportReason} className="grid gap-2">
+                {REPORT_REASONS.map((r) => (
+                  <div key={r} className="flex items-center space-x-2">
+                    <RadioGroupItem value={r} id={`user-reason-${userId}-${r}`} />
+                    <Label htmlFor={`user-reason-${userId}-${r}`}>{r}</Label>
+                  </div>
+                ))}
+              </RadioGroup>
+            </div>
+
+            {reportReason === "Other" && (
+              <div className="space-y-2">
+                <Label>Details</Label>
+                <Textarea
+                  value={reportDetails}
+                  onChange={(e) => setReportDetails(e.target.value)}
+                  placeholder="Add details…"
+                  maxLength={1000}
+                />
+              </div>
+            )}
+
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" onClick={() => setReportModalOpen(false)}>
+                Cancel
+              </Button>
+              <Button
+                onClick={handleReportUser}
+                disabled={!reportReason || reportSubmitting || (reportReason === "Other" && !reportDetails.trim())}
+              >
+                {reportSubmitting ? "Submitting..." : "Submit"}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
