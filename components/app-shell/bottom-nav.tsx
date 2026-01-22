@@ -71,7 +71,7 @@ export function BottomNav() {
   // Exactly 5 nav items for mobile
   const navItems = [
     { icon: Home, label: "Home", href: "/home", auth: false },
-    { icon: Search, label: "Find", href: "/find", auth: false },
+    { icon: Search, label: "Explore", href: "/find", auth: false },
     { icon: PlusCircle, label: "Give", href: "/give", auth: true },
     { icon: Heart, label: "Campaigns", href: "/campaigns", auth: false },
     { icon: MessageSquare, label: "Requests", href: "/my-requests", auth: true, badge: unreadCount },

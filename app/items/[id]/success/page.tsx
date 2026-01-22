@@ -189,7 +189,7 @@ export default function SuccessPage() {
       </Card>
 
       <Dialog open={showReview} onOpenChange={setShowReview}>
-        <DialogContent>
+        <DialogContent className="dialog-success">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Star className="w-5 h-5 text-yellow-500" />
@@ -224,7 +224,7 @@ export default function SuccessPage() {
       </Dialog>
 
       <Dialog open={showDonation} onOpenChange={setShowDonation}>
-        <DialogContent>
+        <DialogContent className="dialog-success">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Heart className="w-5 h-5 text-pink-500" />

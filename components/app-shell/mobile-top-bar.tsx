@@ -59,7 +59,7 @@ export function MobileTopBar() {
     if (pathname === "/dashboard") return "Dashboard";
     if (pathname === "/admin") return "Admin Panel";
     if (pathname === "/admin/settings") return "Platform Settings";
-    if (pathname === "/find") return "Find Items";
+    if (pathname === "/find") return "Explore";
     if (pathname === "/give") return "Give Item";
     if (pathname?.startsWith("/campaigns")) return "Campaigns";
     if (pathname?.startsWith("/my-requests") || pathname?.startsWith("/chat")) return "My Requests";

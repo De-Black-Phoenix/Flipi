@@ -221,7 +221,7 @@ export function Nav() {
             href="/find"
             className={`text-sm hover:text-blue-500 ${pathname === "/find" ? "text-blue-500 font-medium" : ""}`}
           >
-            Find Items
+            Explore
           </Link>
           <Link
             href="/campaigns"
@@ -363,7 +363,7 @@ export function Nav() {
               onClick={closeMobileMenu}
             >
               <Gift className="w-5 h-5" />
-              <span>Find Items</span>
+              <span>Explore</span>
             </Link>
             <Link
               href="/campaigns"

@@ -7,7 +7,9 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { SearchableSelect } from "@/components/ui/searchable-select";
 import Link from "next/link";
-import { MapPin, Gift, Search, X } from "lucide-react";
+import { MapPin, Gift, Search, X, SlidersHorizontal } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import { useAuthGuard } from "@/hooks/use-auth-guard";
@@ -55,6 +57,7 @@ export default function FindItemsPage() {
   const [selectedTown, setSelectedTown] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [userRegion, setUserRegion] = useState<string | null>(null);
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const supabase = createClient();
   const { user } = useAuthGuard({ requireAuth: false });
 
@@ -227,16 +230,28 @@ export default function FindItemsPage() {
             placeholder="Search items..."
             value={searchKeyword}
             onChange={(e) => setSearchKeyword(e.target.value)}
-            className="pl-8 pr-8 h-8 md:h-9 text-base md:text-sm"
+            className="pl-8 pr-16 h-8 md:h-9 text-base md:text-sm"
           />
-          {searchKeyword && (
+          <div className="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-1">
+            {searchKeyword && (
+              <button
+                type="button"
+                onClick={() => setSearchKeyword("")}
+                className="text-muted-foreground hover:text-foreground"
+                aria-label="Clear search"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
             <button
-              onClick={() => setSearchKeyword("")}
-              className="absolute right-2.5 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              type="button"
+              onClick={() => setFiltersOpen(true)}
+              className="text-muted-foreground hover:text-foreground"
+              aria-label="Open filters"
             >
-              <X className="w-4 h-4" />
+              <SlidersHorizontal className="w-4 h-4" />
             </button>
-          )}
+          </div>
         </div>
 
         {/* Category Filter Chips - Above Location Filters */}
@@ -267,7 +282,7 @@ export default function FindItemsPage() {
           </div>
 
         {/* Location Filters Row - Compact Single Line */}
-        <div className="flex flex-row md:flex-wrap items-center gap-2">
+        <div className="hidden md:flex flex-row md:flex-wrap items-center gap-2">
           {/* Region Filter */}
           <div className="w-auto flex-1 md:flex-none min-w-0 md:min-w-[180px]">
             <SearchableSelect
@@ -355,6 +370,44 @@ export default function FindItemsPage() {
         </>
       )}
       </div>
+      <Dialog open={filtersOpen} onOpenChange={setFiltersOpen}>
+        <DialogContent className="sm:max-w-md rounded-t-[32px]">
+          <DialogHeader>
+            <DialogTitle>Filters</DialogTitle>
+            <DialogDescription>Refine items by location.</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="region">Region</Label>
+              <SearchableSelect
+                options={REGIONS}
+                value={selectedRegion || ""}
+                onValueChange={(value) => setSelectedRegion(value || "")}
+                placeholder="All Regions"
+                emptyMessage="No regions found"
+                className="[&_input]:h-10 [&_input]:text-base"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="town">Town/City</Label>
+              <Input
+                id="town"
+                type="text"
+                placeholder="Town/City"
+                value={selectedTown}
+                onChange={(e) => setSelectedTown(e.target.value)}
+                className="h-10 text-base"
+              />
+            </div>
+            <div className="flex items-center justify-end gap-2 pt-2">
+              <Button variant="outline" onClick={clearFilters}>
+                Clear
+              </Button>
+              <Button onClick={() => setFiltersOpen(false)}>Apply</Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -185,7 +185,7 @@ export default function HomePage() {
 
       <div className="min-h-full flex flex-col bg-background">
         {/* Main Content - Centered */}
-        <div className="flex-none flex items-start justify-center px-4 md:px-6 pt-5 pb-6 md:pt-6 md:pb-8">
+        <div className="flex-none flex items-start justify-center px-4 md:px-6 pt-12 pb-12 md:pt-6 md:pb-8">
           <div className="text-center max-w-2xl mx-auto">
             <h1 className="text-2xl md:text-4xl font-bold text-foreground mb-3 leading-tight">
             Need it? <span className="text-primary font-brand">Flipi.</span>
@@ -198,14 +198,14 @@ export default function HomePage() {
                 Give an item
               </GiveItemButton>
               <Button asChild variant="outline" size="default" className="px-6 flex-1 sm:flex-none">
-                <Link href="/find">Find help</Link>
+                <Link href="/find">Explore</Link>
               </Button>
             </div>
           </div>
         </div>
 
         {/* Top Givers Section */}
-        <div className="flex-shrink-0 px-4 md:px-6 pt-4 pb-6 md:py-10 border-t border-border">
+        <div className="flex-shrink-0 px-4 md:px-6 pt-12 pb-6 md:py-10 border-t border-border">
           <div className="max-w-4xl mx-auto">
             {/* Section Title */}
             <div className="mb-4 md:mb-6 text-center">

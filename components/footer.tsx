@@ -18,7 +18,7 @@ export function Footer() {
     <footer className="hidden md:flex flex-shrink-0 border-t border-border px-4 py-3">
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-wrap items-center justify-center gap-6 text-xs text-muted-foreground">
-          <Link href="/find" className="hover:text-foreground">Find Items</Link>
+          <Link href="/find" className="hover:text-foreground">Explore</Link>
           <Link href="/campaigns" className="hover:text-foreground">Campaigns</Link>
           <Link href="/points" className="hover:text-foreground">How Points & Ranks Work</Link>
           <Link href="/about" className="hover:text-foreground">About</Link>

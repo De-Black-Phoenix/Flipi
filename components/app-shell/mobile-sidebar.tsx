@@ -202,7 +202,7 @@ export function MobileSidebar() {
 
   const navItems = [
     { icon: Home, label: "Home", href: "/home", auth: false },
-    { icon: Search, label: "Find Items", href: "/find", auth: false },
+    { icon: Search, label: "Explore", href: "/find", auth: false },
     { icon: Heart, label: "Campaigns", href: "/campaigns", auth: false },
     { icon: MessageSquare, label: "My Requests", href: "/my-requests", auth: true, badge: unreadCount },
     { icon: Gift, label: "My Items", href: "/my-items", auth: true },
@@ -406,7 +406,7 @@ export function MobileSidebar() {
             onClick={() => setShowMoreLinks(false)}
           />
           <div className="fixed bottom-0 left-0 right-0 z-[60] md:hidden">
-            <div className="bg-background border-t border-border rounded-t-3xl px-4 pt-4 pb-6 shadow-lg">
+            <div className="bg-background border-t border-border rounded-t-[40px] px-4 pt-4 pb-6 shadow-lg animate-sheet-bounce">
               <div className="space-y-1">
                 <Link href="/profile" onClick={() => setIsOpen(false)} className="block">
                   <Button

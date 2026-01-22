@@ -103,7 +103,21 @@ export function GiverReviews({ giverId }: GiverReviewsProps) {
   }
 
   if (reviews.length === 0) {
-    return null;
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg flex items-center gap-2">
+            <Star className="w-5 h-5 text-yellow-500" />
+            Reviews
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-muted-foreground">
+            No reviews yet. Reviews will appear here after completed exchanges.
+          </p>
+        </CardContent>
+      </Card>
+    );
   }
 
   return (

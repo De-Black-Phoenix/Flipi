@@ -295,7 +295,7 @@ export default function DashboardPage() {
               <Link href="/give">Give an Item</Link>
             </Button>
               <Button asChild variant="outline" className="w-auto" size="default">
-              <Link href="/find">Find Items</Link>
+              <Link href="/find">Explore</Link>
             </Button>
               <Button asChild variant="outline" className="w-auto" size="default">
               <Link href="/campaigns">Browse Campaigns</Link>
