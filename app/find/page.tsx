@@ -227,7 +227,7 @@ export default function FindItemsPage() {
             placeholder="Search items..."
             value={searchKeyword}
             onChange={(e) => setSearchKeyword(e.target.value)}
-            className="pl-8 pr-8 h-8 md:h-9 text-xs md:text-sm"
+            className="pl-8 pr-8 h-8 md:h-9 text-base md:text-sm"
           />
           {searchKeyword && (
             <button
@@ -276,7 +276,7 @@ export default function FindItemsPage() {
               onValueChange={(value) => setSelectedRegion(value || "")}
               placeholder="All Regions"
               emptyMessage="No regions found"
-              className="flex-1 min-w-0 md:flex-none [&_input]:h-8 [&_input]:md:h-9 [&_input]:text-xs [&_input]:md:text-sm"
+              className="flex-1 min-w-0 md:flex-none [&_input]:h-8 [&_input]:md:h-9 [&_input]:text-base [&_input]:md:text-sm"
             />
         </div>
 
@@ -286,7 +286,7 @@ export default function FindItemsPage() {
             placeholder="Town/City"
             value={selectedTown}
             onChange={(e) => setSelectedTown(e.target.value)}
-              className="h-8 md:h-9 flex-1 md:flex-none min-w-0 md:min-w-[150px] md:max-w-[220px] text-xs md:text-sm"
+              className="h-8 md:h-9 flex-1 md:flex-none min-w-0 md:min-w-[150px] md:max-w-[220px] text-base md:text-sm"
           />
 
           {/* Clear Filters Button - Compact */}

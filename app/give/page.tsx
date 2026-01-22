@@ -657,7 +657,7 @@ export default function GiveItemPage() {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={4}
-              className="text-xs md:text-sm min-h-[80px] md:min-h-[100px]"
+              className="text-base md:text-sm min-h-[80px] md:min-h-[100px]"
               required
             />
           </div>
@@ -666,7 +666,7 @@ export default function GiveItemPage() {
             <div className="space-y-2 md:space-y-3">
               <Label htmlFor="category" className="text-xs md:text-sm">Category *</Label>
               <Select value={category} onValueChange={setCategory} required>
-                <SelectTrigger className="h-8 md:h-10 text-xs md:text-sm">
+                <SelectTrigger className="h-8 md:h-10 text-base md:text-sm">
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
                 <SelectContent>
@@ -682,7 +682,7 @@ export default function GiveItemPage() {
             <div className="space-y-2 md:space-y-3">
               <Label htmlFor="condition" className="text-xs md:text-sm">Condition *</Label>
               <Select value={condition} onValueChange={setCondition} required>
-                <SelectTrigger className="h-8 md:h-10 text-xs md:text-sm">
+                <SelectTrigger className="h-8 md:h-10 text-base md:text-sm">
                   <SelectValue placeholder="Select condition" />
                 </SelectTrigger>
                 <SelectContent>
@@ -755,7 +755,7 @@ export default function GiveItemPage() {
                 }}
                 placeholder="Search or select region"
                 emptyMessage="No regions found"
-                className="h-8 md:h-10 text-xs md:text-sm"
+                className="h-8 md:h-10 [&_input]:text-base [&_input]:md:text-sm"
               />
             </div>
 
@@ -768,7 +768,7 @@ export default function GiveItemPage() {
                 placeholder={region ? "Search or select your town/city" : "Select a region first"}
                 disabled={!region}
                 emptyMessage={region ? "No towns found" : "Select a region first"}
-                className="h-8 md:h-10 text-xs md:text-sm"
+                className="h-8 md:h-10 [&_input]:text-base [&_input]:md:text-sm"
               />
             </div>
           </div>

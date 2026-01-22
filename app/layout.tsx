@@ -32,7 +32,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="h-full">
-      <body className={`${bricolageGrotesque.variable} font-sans h-screen overflow-hidden`}>
+      <body className={`${bricolageGrotesque.variable} font-sans min-h-[100dvh] overflow-hidden`}>
         <Script
           src="https://js.paystack.co/v1/inline.js"
           strategy="lazyOnload"

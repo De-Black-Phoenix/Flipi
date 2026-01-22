@@ -91,6 +91,22 @@
   }
 }
 
+@media (max-width: 768px) {
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+
+  .min-h-screen {
+    min-height: 100dvh;
+  }
+
+  .h-screen {
+    height: 100dvh;
+  }
+}
+
 @layer components {
   nav a,
   nav button,

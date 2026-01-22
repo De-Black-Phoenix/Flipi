@@ -25,7 +25,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <MobileSidebarProvider>
-      <div className="h-screen w-screen flex justify-center overflow-hidden bg-background fixed inset-0">
+      <div className="min-h-[100dvh] w-screen flex justify-center overflow-hidden bg-background fixed inset-0">
         <div className="w-full md:w-[85%] md:max-w-[85vw] flex h-full overflow-hidden bg-background">
           {/* Left Sidebar - Desktop Only */}
           <LeftSidebar />
